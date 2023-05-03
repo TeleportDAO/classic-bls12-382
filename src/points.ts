@@ -1,7 +1,6 @@
 import { order } from "./fields";
 import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
-// import { error } from "console";
 
 class point {
     public x: Fp;

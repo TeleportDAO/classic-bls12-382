@@ -1,13 +1,10 @@
 
-// let order: BigNumber = BigNumber.from("0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab")
 let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-// let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 
 function mod(a: bigint, b: bigint) {
     const res = a % b;
     return res >= 0n ? res : b + res;
-    // return res;
 }
 
 const beea = (
@@ -17,7 +14,6 @@ const beea = (
     x2: bigint, 
     p: bigint
 ) => {
-    let firstU = u;
     let theInv = 0n
 
     while (u != 1n && v != 1n) {
@@ -317,8 +313,6 @@ class Fp12 implements Fp {
         console.log("end of fp12")
     }
     inv(): Fp12 {
-        // this.a0.mul(this.a0).displayInfo()
-        // this.a1.mul(this.a1).mulNonres().displayInfo()
 
         let factor = 
             ((
@@ -374,3 +368,4 @@ let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 export { Fp, Fp1, Fp2, Fp6, Fp12 }
 export { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
 export { order, groupOrder }
+export { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 }

@@ -1,17 +1,8 @@
-import { BigNumber } from "@ethersproject/bignumber"
+// import { BigNumber } from "@ethersproject/bignumber"
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
+import { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 } from "./fields"
 import { untwist, pointDouble, pointAdd, powHelper, point } from "./points"
-
-// TODO: import from fields.ts
-let zeroFp1 = new Fp1 (0n)
-let oneFp1 = new Fp1 (1n)
-let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (oneFp1, zeroFp1)
-let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
-let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
-let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
-let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
@@ -37,7 +28,6 @@ function doubleEval(fp2Point: point, fpPoint: point) {
 
 function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     
-
     let slope = (fp12PointQ.y.sub(fp12PointR.y)).mul(
         (
             fp12PointQ.x.sub(fp12PointR.x)
@@ -133,13 +123,7 @@ function pairing(p: point, q: point): Fp12 {
         q.isOnCurve() && 
         q.isInSubGroup()
     ) {
-        let bigNumberOrder = BigNumber.from(order.toString())
-        bigNumberOrder = (bigNumberOrder.pow(12)).sub(BigNumber.from(1))
-        let millerRes = miller(p, q)
-        let theSecond = (BigInt(bigNumberOrder.toHexString())) / (groupOrder)
-        let powRes = powHelper(millerRes, theSecond, oneFp12) as Fp12
-        
-        return powRes;
+        return powHelper(miller(p, q), ((order ** 12n) - 1n) / groupOrder, oneFp12) as Fp12
     } else {
         return zeroFp12;
     }
