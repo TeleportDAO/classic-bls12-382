@@ -1,4 +1,3 @@
-// import { BigNumber } from "@ethersproject/bignumber"
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
 import { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 } from "./fields"

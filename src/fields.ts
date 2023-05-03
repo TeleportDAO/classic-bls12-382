@@ -7,6 +7,7 @@ function mod(a: bigint, b: bigint) {
     return res >= 0n ? res : b + res;
 }
 
+// binary extended euclidean algorithm
 const beea = (
     u: bigint, 
     v: bigint, 

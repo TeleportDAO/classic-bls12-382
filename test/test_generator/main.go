@@ -1,75 +1,193 @@
 package main
 
-import "fmt"
+import (
+	"encoding/csv"
+	"encoding/json"
+	"fmt"
+	"os"
+)
+
+// reference of tests: https://github.com/matter-labs/eip1962/blob/master/src/test/test_vectors/eip2537
+
+type G1Add struct {
+	P1X string `json:"p1x"`
+	P1Y string `json:"p1y"`
+	P2X string `json:"p2x"`
+	P2Y string `json:"p2y"`
+	RsX string `json:"rsx"`
+	RsY string `json:"rsy"`
+}
+
+type G1Mul struct {
+	P1X    string `json:"p1x"`
+	P1Y    string `json:"p1y"`
+	Scalar string `json:"scalar"`
+	RsX    string `json:"rsx"`
+	RsY    string `json:"rsy"`
+}
+
+type G2Add struct {
+	P1XA0 string `json:"p1x_a0"`
+	P1XA1 string `json:"p1x_a1"`
+	P1YA0 string `json:"p1y_a0"`
+	P1YA1 string `json:"p1y_a1"`
+	P2XA0 string `json:"p2x_a0"`
+	P2XA1 string `json:"p2x_a1"`
+	P2YA0 string `json:"p2y_a0"`
+	P2YA1 string `json:"p2y_a1"`
+	RsXA0 string `json:"rsx_a0"`
+	RsXA1 string `json:"rsx_a1"`
+	RsYA0 string `json:"rsy_a0"`
+	RsYA1 string `json:"rsy_a1"`
+}
+
+type G2Mul struct {
+	P1XA0  string `json:"p1x_a0"`
+	P1XA1  string `json:"p1x_a1"`
+	P1YA0  string `json:"p1y_a0"`
+	P1YA1  string `json:"p1y_a1"`
+	Scalar string `json:"scalar"`
+	RsXA0  string `json:"rsx_a0"`
+	RsXA1  string `json:"rsx_a1"`
+	RsYA0  string `json:"rsy_a0"`
+	RsYA1  string `json:"rsy_a1"`
+}
+
+func readCsv(path string) [][]string {
+	// Open the CSV file
+	file, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	// Create a new CSV reader
+	reader := csv.NewReader(file)
+
+	// Read all records from CSV
+	records, err := reader.ReadAll()
+	if err != nil {
+		panic(err)
+	}
+
+	return records
+}
 
 func main() {
-	//g1Add()
-	//g2Add()
-
-	//g1Mul()
-	// g2Mul()
+	saveG1Add("g1_add.csv")
+	saveG1Mul("g1_mul.csv")
 }
 
-// https://github.com/matter-labs/eip1962/tree/master/src/test/test_vectors/eip2537
+func saveG1Add(path string) {
+	records := readCsv(path)
 
-func g1Add() {
-	ps := "000000000000000000000000000000000c1243478f4fbdc21ea9b241655947a28accd058d0cdb4f9f0576d32f09dddaf0850464550ff07cab5927b3e4c863ce90000000000000000000000000000000015fb54db10ffac0b6cd374eb7168a8cb3df0a7d5f872d8e98c1f623deb66df5dd08ff4c3658f2905ec8bd02598bd4f90000000000000000000000000000000001461565b03a86df363d1854b4af74879115dffabeddfa879e2c8db9aa414fb291a076c3bdf0beee82d9c094ea8dc381a000000000000000000000000000000000e19d51ab619ee2daf25ea5bfa51eb217eabcfe0b5cb0358fd2fa105fd7cb0f5203816b990df6fda4e0e8d541be9bcf6"
-	rs := "000000000000000000000000000000000cb40d0bf86a627d3973f1e7846484ffd0bc4943b42a54ff9527c285fed3c056b947a9b6115824cabafe13cd1af8181c00000000000000000000000000000000076255fc12f1a9dbd232025815238baaa6a3977fd87594e8d1606caec0d37b916e1e43ee2d2953d75a40a7ba416df237"
+	theG1Adds := make([]G1Add, 0, len(records))
 
-	fmt.Printf("\"p1X\": \"0x%s\", \n", ps[:128])
-	fmt.Printf("\"p1Y\": \"0x%s\", \n", ps[128:256])
-	fmt.Printf("\"p2X\": \"0x%s\", \n", ps[256:384])
-	fmt.Printf("\"p2Y\": \"0x%s\", \n", ps[384:512])
+	// Print each record
+	for _, record := range records {
+		theG1Add := g1Add(record[0], record[1])
+		theG1Adds = append(theG1Adds, theG1Add)
 
-	fmt.Printf("\"RSX\": \"0x%s\", \n", rs[:128])
-	fmt.Printf("\"RSY\": \"0x%s\" \n", rs[128:256])
+	}
+
+	// Convert the slice to a JSON-encoded byte array
+	b, err := json.MarshalIndent(theG1Adds, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write the byte array to a file
+	file, err := os.Create("../fixtures/g1_add.json")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(b)
+	if err != nil {
+		panic(err)
+	}
+}
+func g1Add(ps, rs string) G1Add {
+	return G1Add{
+		P1X: ps[:128],
+		P1Y: ps[128:256],
+		P2X: ps[256:384],
+		P2Y: ps[384:512],
+		RsX: rs[:128],
+		RsY: rs[128:256],
+	}
 }
 
-func g1Mul() {
-	ps := "0000000000000000000000000000000017a17b82e3bfadf3250210d8ef572c02c3610d65ab4d7366e0b748768a28ee6a1b51f77ed686a64f087f36f641e7dca900000000000000000000000000000000077ea73d233ccea51dc4d5acecf6d9332bf17ae51598f4b394a5f62fb387e9c9aa1d6823b64a074f5873422ca57545d38964d5867927bc3e35a0b4c457482373969bff5edff8a781d65573e07fd87b89"
-	rs := "000000000000000000000000000000000d7e5794c88c549970383454d98f9b7cebb7fdf8545256f1a5e42a61aa1d61193f02075dc6314b650da14f3776da6ead0000000000000000000000000000000002054faff236d38d2307aa6cbbc696d50f5b3ffead1be2df97a05ebbcbc9e02eaf153f311a1e141eb95d411c0ec6e981"
+func saveG1Mul(path string) {
+	records := readCsv(path)
 
-	fmt.Printf("\"p1X\": \"0x%s\", \n", ps[:128])
-	fmt.Printf("\"p1Y\": \"0x%s\", \n", ps[128:256])
-	fmt.Printf("\"scl\": \"0x%s\", \n", ps[256:])
+	theG1Muls := make([]G1Mul, 0, len(records))
 
-	fmt.Printf("\"RSX\": \"0x%s\", \n", rs[:128])
-	fmt.Printf("\"RSY\": \"0x%s\" \n", rs[128:256])
+	// Print each record
+	for _, record := range records {
+		theG1Mul := g1Mul(record[0], record[1])
+		theG1Muls = append(theG1Muls, theG1Mul)
+	}
+
+	// Convert the slice to a JSON-encoded byte array
+	b, err := json.MarshalIndent(theG1Muls, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write the byte array to a file
+	file, err := os.Create("../fixtures/g1_mul.json")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(b)
+	if err != nil {
+		panic(err)
+	}
 }
 
-func g2Add() {
-	ps := "000000000000000000000000000000000149704960cccf9d5ea414c73871e896b1d4cf0a946b0db72f5f2c5df98d2ec4f3adbbc14c78047961bc9620cb6cfb5900000000000000000000000000000000140c5d25e534fb1bfdc19ba4cecaabe619f6e0cd3d60b0f17dafd7bcd27b286d4f4477d00c5e1af22ee1a0c67fbf177c00000000000000000000000000000000029a1727041590b8459890de736df15c00d80ab007c3aee692ddcdf75790c9806d198e9f4502bec2f0a623491c3f877d0000000000000000000000000000000008a94c98baa9409151030d4fae2bd4a64c6f11ea3c99b9661fdaed226b9a7c2a7d609be34afda5d18b8911b6e015bf49000000000000000000000000000000000286f09f931c07507ba4aafb7d43befe0b1d25b27ecc9199b19a9dc20bc7ec0329479ef224e00dece67ec0d61f1ca5ae0000000000000000000000000000000014e6ed154b5552be5c463b730b2134f83e0071dcdadfaa68e6c7c7f6e17dabb7daf06e409177bc4b38cfdb8248157618000000000000000000000000000000000f145e998dc6eb0c2b2be87db62949c7bfa63e8b01c8634248010fd623cfaec5d6c6c193331440957d333bf0c988b7b10000000000000000000000000000000002a1ab3eea343cfdea5779f64b3bddbf0769aded60e54a7507338f044310ba239430663394f110e560594d6042a99f1c"
-	rs := "000000000000000000000000000000000f69e3616e7122bf78230461bb1f4b194988adc6149372691d8794d0086fba0870a2255a2c79cc3426e7ba4d032fc2ab00000000000000000000000000000000174752301e05dcd62f7a3ae3357344e64d1c94835b2b742ac24449ee2728d693a0df10c3beaeb45d1b4af4ac2bdbb8b200000000000000000000000000000000051a761a3ceb275ec28a2a269b5ded1d9fd11a617c958e73c07de3a92ac480aa82c7d2a1852d291804e734526277f5740000000000000000000000000000000009bec9045ea89d5d16588e3373cc977f6d975d0e2213b171403a9b2ca460b3b2e1106b474185516d4200655b17a179a1"
-
-	fmt.Printf("\"p1X_a0\": \"0x%s\", \n", ps[:128])
-	fmt.Printf("\"p1X_a1\": \"0x%s\", \n", ps[128:256])
-	fmt.Printf("\"p1Y_a0\": \"0x%s\", \n", ps[256:384])
-	fmt.Printf("\"p1Y_a1\": \"0x%s\", \n", ps[384:512])
-	fmt.Printf("\"p2X_a0\": \"0x%s\", \n", ps[512:640])
-	fmt.Printf("\"p2X_a1\": \"0x%s\", \n", ps[640:768])
-	fmt.Printf("\"p2Y_a0\": \"0x%s\", \n", ps[768:896])
-	fmt.Printf("\"p2Y_a1\": \"0x%s\", \n", ps[896:1024])
-
-	fmt.Printf("\"RSX_a0\": \"0x%s\", \n", rs[:128])
-	fmt.Printf("\"RSX_a1\": \"0x%s\", \n", rs[128:256])
-	fmt.Printf("\"RSY_a0\": \"0x%s\", \n", rs[256:384])
-	fmt.Printf("\"RSY_a1\": \"0x%s\" \n", rs[384:512])
+func g1Mul(ps, rs string) G1Mul {
+	return G1Mul{
+		P1X:    ps[:128],
+		P1Y:    ps[128:256],
+		Scalar: ps[256:],
+		RsX:    rs[:128],
+		RsY:    rs[128:256],
+	}
 }
 
-func g2Mul() {
-	ps := "000000000000000000000000000000000149704960cccf9d5ea414c73871e896b1d4cf0a946b0db72f5f2c5df98d2ec4f3adbbc14c78047961bc9620cb6cfb5900000000000000000000000000000000140c5d25e534fb1bfdc19ba4cecaabe619f6e0cd3d60b0f17dafd7bcd27b286d4f4477d00c5e1af22ee1a0c67fbf177c00000000000000000000000000000000029a1727041590b8459890de736df15c00d80ab007c3aee692ddcdf75790c9806d198e9f4502bec2f0a623491c3f877d0000000000000000000000000000000008a94c98baa9409151030d4fae2bd4a64c6f11ea3c99b9661fdaed226b9a7c2a7d609be34afda5d18b8911b6e015bf494c51f97bcdda93904ae26991b471e9ea942e2b5b8ed26055da11c58bc7b5002a"
-	rs := "0000000000000000000000000000000017ebc9446f8c8e17dfeddab9188d0c808565da29c0bdbbc4138a44ca3196c4564853be28286b66660cda36832d6940010000000000000000000000000000000007f29a9583b4ae83d3913dcd72590a3f20f39eb5a6d36663c1ef433058e76550085b9c01bf797d98d0eef45cc22ff8c50000000000000000000000000000000016eeaeb123b12d1913ff1e50f974228c79f2b995609d2e3835c8e1d68773b0cd484df57b86111cdb75de1e19eaf062e500000000000000000000000000000000002f5688c1286aed42309896bd65d1826dc64dda615238fa9043669806968b8e0e1e3e77ef192b7df540aaf0ed282a9a"
+func g2Add(ps, rs string) G2Add {
+	return G2Add{
+		P1XA0: ps[:128],
+		P1XA1: ps[128:256],
+		P1YA0: ps[256:384],
+		P1YA1: ps[384:512],
+		P2XA0: ps[512:640],
+		P2XA1: ps[640:768],
+		P2YA0: ps[768:896],
+		P2YA1: ps[896:1024],
+		RsXA0: rs[:128],
+		RsXA1: rs[128:256],
+		RsYA0: rs[256:384],
+		RsYA1: rs[384:512],
+	}
+}
 
-	fmt.Printf("\"p1X_a0\": \"0x%s\", \n", ps[:128])
-	fmt.Printf("\"p1X_a1\": \"0x%s\", \n", ps[128:256])
-	fmt.Printf("\"p1Y_a0\": \"0x%s\", \n", ps[256:384])
-	fmt.Printf("\"p1Y_a1\": \"0x%s\", \n", ps[384:512])
-	fmt.Printf("\"scl\": \"0x%s\", \n", ps[512:])
-
-	fmt.Printf("\"RSX_a0\": \"0x%s\", \n", rs[:128])
-	fmt.Printf("\"RSX_a1\": \"0x%s\", \n", rs[128:256])
-	fmt.Printf("\"RSY_a0\": \"0x%s\", \n", rs[256:384])
-	fmt.Printf("\"RSY_a1\": \"0x%s\" \n", rs[384:512])
+func g2Mul(ps, rs string) G2Mul {
+	return G2Mul{
+		P1XA0:  ps[:128],
+		P1XA1:  ps[128:256],
+		P1YA0:  ps[256:384],
+		P1YA1:  ps[384:512],
+		Scalar: ps[512:],
+		RsXA0:  rs[:128],
+		RsXA1:  rs[128:256],
+		RsYA0:  rs[256:384],
+		RsYA1:  rs[384:512],
+	}
 }
 
 func g1AddForSolidity() {
