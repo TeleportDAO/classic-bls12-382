@@ -8,9 +8,6 @@ import { pairing, miller, doubleEval, addEval } from "../src/pairing"
 
 // const bls = require('@noble/bls12-381');
 
-const g1AddTestVector = require("./fixtures/g1_add.json")
-const g2AddTestVector = require("./fixtures/g2_add.json")
-
 describe("Verification", () => {
 
     it("verify", function() {
