@@ -76,6 +76,8 @@ func readCsv(path string) [][]string {
 func main() {
 	saveG1Add("g1_add.csv")
 	saveG1Mul("g1_mul.csv")
+	saveG2Add("g2_add.csv")
+	saveG2Mul("g2_mul.csv")
 }
 
 func saveG1Add(path string) {
@@ -159,6 +161,36 @@ func g1Mul(ps, rs string) G1Mul {
 	}
 }
 
+func saveG2Add(path string) {
+	records := readCsv(path)
+
+	theG2Adds := make([]G2Add, 0, len(records))
+
+	// Print each record
+	for _, record := range records {
+		theG2Add := g2Add(record[0], record[1])
+		theG2Adds = append(theG2Adds, theG2Add)
+	}
+
+	// Convert the slice to a JSON-encoded byte array
+	b, err := json.MarshalIndent(theG2Adds, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write the byte array to a file
+	file, err := os.Create("../fixtures/g2_add.json")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(b)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func g2Add(ps, rs string) G2Add {
 	return G2Add{
 		P1XA0: ps[:128],
@@ -173,6 +205,36 @@ func g2Add(ps, rs string) G2Add {
 		RsXA1: rs[128:256],
 		RsYA0: rs[256:384],
 		RsYA1: rs[384:512],
+	}
+}
+
+func saveG2Mul(path string) {
+	records := readCsv(path)
+
+	theG2Muls := make([]G2Mul, 0, len(records))
+
+	// Print each record
+	for _, record := range records {
+		theG2Mul := g2Mul(record[0], record[1])
+		theG2Muls = append(theG2Muls, theG2Mul)
+	}
+
+	// Convert the slice to a JSON-encoded byte array
+	b, err := json.MarshalIndent(theG2Muls, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write the byte array to a file
+	file, err := os.Create("../fixtures/g2_mul.json")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(b)
+	if err != nil {
+		panic(err)
 	}
 }
 
