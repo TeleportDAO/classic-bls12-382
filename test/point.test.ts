@@ -1,14 +1,13 @@
-// import { BN } from 'bn.js'; // or whichever library you are using for big integers
 import { expect } from "chai";
 import { point, pointAdd, pointMul, pointDouble, powHelper } from '../src/points';
 import { mod, Fp, Fp1, Fp2, Fp6, Fp12, order, groupOrder } from '../src/fields';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const g1AddTestVector = require("./fixtures/g1_add.json")
-// const g2AddTestVector = require("./fixtures/g2_add.json")
+const g2AddTestVector = require("./fixtures/g2_add.json")
 
 const g1MulTestVector = require("./fixtures/g1_mul.json")
-// const g2MulTestVector = require("./fixtures/g2_mul.json")
+const g2MulTestVector = require("./fixtures/g2_mul.json")
 
 let zeroFp1 = new Fp1 (0n)
 let oneFp1 = new Fp1 (1n)
@@ -46,7 +45,7 @@ function createG2Point(
     )
 }
 
-describe.only("Points", () => {
+describe("Points", () => {
 
     it("g1 add", function() {
         for (let i = 0; i < g1AddTestVector.length; i++) {
@@ -95,72 +94,72 @@ describe.only("Points", () => {
         }
     }).timeout(20000)
 
-    // it("g2 add", function() {
-    //     for (let i = 0; i < g2AddTestVector.g2_add.length; i++) {
-    //         let p1 = createG2Point(
-    //             BigInt(g2AddTestVector.g2_add[i].p1X_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].p1X_a0),
-    //             BigInt(g2AddTestVector.g2_add[i].p1Y_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].p1Y_a0)
-    //         )
+    it("g2 add", function() {
+        for (let i = 0; i < g2AddTestVector.length; i++) {
+            let p1 = createG2Point(
+                BigInt("0x" + g2AddTestVector[i].p1x_a1),
+                BigInt("0x" + g2AddTestVector[i].p1x_a0),
+                BigInt("0x" + g2AddTestVector[i].p1y_a1),
+                BigInt("0x" + g2AddTestVector[i].p1y_a0)
+            )
     
-    //         let p2 = createG2Point(
-    //             BigInt(g2AddTestVector.g2_add[i].p2X_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].p2X_a0),
-    //             BigInt(g2AddTestVector.g2_add[i].p2Y_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].p2Y_a0)
-    //         )
+            let p2 = createG2Point(
+                BigInt("0x" + g2AddTestVector[i].p2x_a1),
+                BigInt("0x" + g2AddTestVector[i].p2x_a0),
+                BigInt("0x" + g2AddTestVector[i].p2y_a1),
+                BigInt("0x" + g2AddTestVector[i].p2y_a0)
+            )
     
-    //         let res = createG2Point(
-    //             BigInt(g2AddTestVector.g2_add[i].RSX_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].RSX_a0),
-    //             BigInt(g2AddTestVector.g2_add[i].RSY_a1),
-    //             BigInt(g2AddTestVector.g2_add[i].RSY_a0)
-    //         )
+            let res = createG2Point(
+                BigInt("0x" + g2AddTestVector[i].rsx_a1),
+                BigInt("0x" + g2AddTestVector[i].rsx_a0),
+                BigInt("0x" + g2AddTestVector[i].rsy_a1),
+                BigInt("0x" + g2AddTestVector[i].rsy_a0)
+            )
     
-    //         let p1PlusP2 = pointAdd(p1, p2)
+            let p1PlusP2 = pointAdd(p1, p2)
     
-    //         expect(
-    //             res.eq(p1PlusP2)
-    //         ).to.equal(true)
-    //     }
-    // })
+            expect(
+                res.eq(p1PlusP2)
+            ).to.equal(true)
+        }
+    })
 
-    // it("g2 mul", function() {
+    it("g2 mul", function() {
 
-    //     for (let i = 0; i < g2MulTestVector.g2_mul.length; i++) {
-    //         let p1 = createG2Point(
-    //             BigInt(g2MulTestVector.g2_mul[i].p1X_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1X_a0),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1Y_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1Y_a0)
-    //         )
+        for (let i = 0; i < g2MulTestVector.length; i++) {
+            let p1 = createG2Point(
+                BigInt("0x" + g2MulTestVector[i].p1x_a1),
+                BigInt("0x" + g2MulTestVector[i].p1x_a0),
+                BigInt("0x" + g2MulTestVector[i].p1y_a1),
+                BigInt("0x" + g2MulTestVector[i].p1y_a0)
+            )
     
-    //         let scalar = BigInt(g2MulTestVector.g2_mul[i].scl)
+            let scalar = BigInt("0x" + g2MulTestVector[i].scalar)
     
-    //         let res = createG2Point(
-    //             BigInt(g2MulTestVector.g2_mul[i].RSX_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].RSX_a0),
-    //             BigInt(g2MulTestVector.g2_mul[i].RSY_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].RSY_a0)
-    //         )
+            let res = createG2Point(
+                BigInt("0x" + g2MulTestVector[i].rsx_a1),
+                BigInt("0x" + g2MulTestVector[i].rsx_a0),
+                BigInt("0x" + g2MulTestVector[i].rsy_a1),
+                BigInt("0x" + g2MulTestVector[i].rsy_a0)
+            )
     
-    //         let sclMuP1 = pointMul(scalar, p1)
+            let sclMuP1 = pointMul(scalar, p1)
     
-    //         expect(
-    //             res.eq(sclMuP1)
-    //         ).to.equal(true)
-    //     }
-    // })
+            expect(
+                res.eq(sclMuP1)
+            ).to.equal(true)
+        }
+    }).timeout(20000)
 
     // it("point at infinity", function() {
 
-    //     for (let i = 0; i < g2MulTestVector.g2_mul.length; i++) {
+    //     for (let i = 0; i < g2MulTestVector.length; i++) {
     //         let p1 = createG2Point(
-    //             BigInt(g2MulTestVector.g2_mul[i].p1X_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1X_a0),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1Y_a1),
-    //             BigInt(g2MulTestVector.g2_mul[i].p1Y_a0)
+    //             BigInt(g2MulTestVector[i].p1X_a1),
+    //             BigInt(g2MulTestVector[i].p1X_a0),
+    //             BigInt(g2MulTestVector[i].p1Y_a1),
+    //             BigInt(g2MulTestVector[i].p1Y_a0)
     //         )
     
     //         let orderMuP1 = pointMul(groupOrder * (10000n), p1)
@@ -173,14 +172,14 @@ describe.only("Points", () => {
     //     }
     // })
 
-    it("point double", function() {
+    // it("point double", function() {
 
-        let p1 = new point(
-            new Fp1(3924344720014921989021119511230386772731826098545970939506931087307386672210285223838080721449761235230077903044877n),
-            new Fp1(849807144208813628470408553955992794901182511881745746883517188868859266470363575621518219643826028639669002210378n),
-            false
-        )
-    })
+    //     let p1 = new point(
+    //         new Fp1(3924344720014921989021119511230386772731826098545970939506931087307386672210285223838080721449761235230077903044877n),
+    //         new Fp1(849807144208813628470408553955992794901182511881745746883517188868859266470363575621518219643826028639669002210378n),
+    //         false
+    //     )
+    // })
 
     // it("pow ", function() {
 
