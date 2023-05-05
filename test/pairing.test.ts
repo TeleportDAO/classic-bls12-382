@@ -6,8 +6,6 @@ import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
 
 import { pairing, miller, doubleEval, addEval } from "../src/pairing"
 
-const g1AddTestVector = require("./fixtures/g1_add.json")
-const g2AddTestVector = require("./fixtures/g2_add.json")
 
 
 describe("Pairing", () => {

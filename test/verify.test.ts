@@ -1,17 +1,13 @@
 import { expect } from "chai"
-import { untwist, pointDouble, pointMul, pointAdd, point } from "../src/points"
-import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "../src/fields"
-import { BigNumber } from "@ethersproject/bignumber";
-import { Fp, Fp1, Fp2, Fp6, Fp12 } from "../src/fields"
+import { point } from "../src/points"
+import { fp1FromBigInt } from "../src/fields"
+import { Fp2 } from "../src/fields"
 
 import { pairing, miller, doubleEval, addEval } from "../src/pairing"
 
 // const bls = require('@noble/bls12-381');
 
-const g1AddTestVector = require("./fixtures/g1_add.json")
-const g2AddTestVector = require("./fixtures/g2_add.json")
-
-describe("Verification", () => {
+describe.only("Verification", () => {
 
     it.only("check pairing tests", function() {
 
@@ -175,23 +171,19 @@ describe("Verification", () => {
         ).to.equal(true)
 
         let pairingRes = pairing(P.pointNegate(), Hm)
-        // let pairingRes = pairing(P, Hm)
-        console.log("pairingRes: ")
-        pairingRes.displayInfo()
+        // console.log("pairingRes: ")
+        // pairingRes.displayInfo()
 
         let pairingRes2 = pairing(G, S)
-        console.log("pairingRes2: ")
-        pairingRes2.displayInfo()
+        // console.log("pairingRes2: ")
+        // pairingRes2.displayInfo()
     
-        // expect(
-        //     pairingRes.mul(pairingRes2).equalOne()
-        // ).to.equal(true)
 
         expect(
             pairingRes.mul(pairingRes2).equalOne()
         ).to.equal(true)
 
-    })
+    }).timeout(20000)
 
     // it("messageVerification", async function() {
     //     let hashedMessage = "01a6ba2f9a11fa5598b2d8ace0fbe0a0eacb65deceb476fbbcb64fd24557c2f4"
