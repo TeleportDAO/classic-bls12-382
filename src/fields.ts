@@ -308,10 +308,8 @@ class Fp12 implements Fp {
     	this.a1 = a1;
     }
   	displayInfo(){
-        console.log("fp12")
         console.log("a0: ", this.a0.displayInfo())
         console.log("a1: ", this.a1.displayInfo())
-        console.log("end of fp12")
     }
     inv(): Fp12 {
 
@@ -363,10 +361,23 @@ class Fp12 implements Fp {
     }
 }
 
+function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
+    if (exp <= 1n) {
+      return a0;
+    }
+    const accum = powHelper(a0, exp >> 1n, result);
+    if (mod(exp, 2n) == 0n) {
+      return accum.mul(accum);
+    } else {
+      return accum.mul(accum).mul(a0);
+    }
+}
+
+
 let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
 let oneFp12 = new Fp12 (oneFp6, zeroFp6)
 
 export { Fp, Fp1, Fp2, Fp6, Fp12 }
-export { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
+export { mod, powHelper, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt }
 export { order, groupOrder }
 export { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 }

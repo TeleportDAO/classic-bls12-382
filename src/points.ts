@@ -187,17 +187,4 @@ function pointMulHelper(scalar: bigint, base: point, accum: point): point {
     }
 }
 
-function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
-    if (exp <= 1n) {
-      return a0;
-    }
-    // const accum = powHelper(a0, exp / 2n, result);
-    const accum = powHelper(a0, exp >> 1n, result);
-    if (mod(exp, 2n) == 0n) {
-      return accum.mul(accum);
-    } else {
-      return accum.mul(accum).mul(a0);
-    }
-}
-
-export { untwist, pointDouble, pointAdd, pointMul, powHelper, point }
+export { untwist, pointDouble, pointAdd, pointMul, point }
