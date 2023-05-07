@@ -361,15 +361,26 @@ class Fp12 implements Fp {
 }
 
 function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
-    if (exp <= 1n) {
-      return a0;
+    let accum = oneFp12;
+    while (exp > 0n){
+        if ((exp & 1n) != 0n) {
+            accum = accum.mul(a0 as Fp12);
+        }
+
+        exp = exp >> 1n;
+        a0 = a0.mul(a0);
     }
-    const accum = powHelper(a0, exp >> 1n, result);
-    if (mod(exp, 2n) == 0n) {
-      return accum.mul(accum);
-    } else {
-      return accum.mul(accum).mul(a0);
-    }
+
+    return accum;
+    // if (exp <= 1n) {
+    //   return a0;
+    // }
+    // accum = powHelper(a0, exp >> 1n, result);
+    // if (mod(exp, 2n) == 0n) {
+    //   return accum.mul(accum);
+    // } else {
+    //   return accum.mul(accum).mul(a0);
+    // }
 }
 
 
