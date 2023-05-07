@@ -151,7 +151,7 @@ describe("Points", () => {
         }
     }).timeout(20000)
     
-    it.only("point at infinity", function() {
+    it("point at infinity", function() {
         for (let i = 0; i < g2MulTestVector.length; i++) {
             let p1 = createG2Point(
                 BigInt("0x" + g2MulTestVector[i].p1x_a1),
