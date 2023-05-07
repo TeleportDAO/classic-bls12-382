@@ -39,27 +39,27 @@ describe("Verification", () => {
     it.only("verify test", function() {
         for (let i = 0; i < pairingTestVector.length; i++) {
             let p1 = createG1Point(
-                BigInt("0x" + pairingTestVector[i].p1x),
-                BigInt("0x" + pairingTestVector[i].p1y)
+                BigInt("0x" + pairingTestVector[i].points[0].p1x),
+                BigInt("0x" + pairingTestVector[i].points[0].p1y)
             )
 
             let q1 = createG2Point(
-                BigInt("0x" + pairingTestVector[i].q1x_a1),
-                BigInt("0x" + pairingTestVector[i].q1x_a0),
-                BigInt("0x" + pairingTestVector[i].q1y_a1),
-                BigInt("0x" + pairingTestVector[i].q1y_a0)
+                BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
+                BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
+                BigInt("0x" + pairingTestVector[i].points[0].q1y_a1),
+                BigInt("0x" + pairingTestVector[i].points[0].q1y_a0)
             )
 
             let p2 = createG1Point(
-                BigInt("0x" + pairingTestVector[i].p1x),
-                BigInt("0x" + pairingTestVector[i].p1y)
+                BigInt("0x" + pairingTestVector[i].points[0].p1x),
+                BigInt("0x" + pairingTestVector[i].points[0].p1y)
             )
 
             let q2 = createG2Point(
-                BigInt("0x" + pairingTestVector[i].q1x_a1),
-                BigInt("0x" + pairingTestVector[i].q1x_a0),
-                BigInt("0x" + pairingTestVector[i].q1y_a1),
-                BigInt("0x" + pairingTestVector[i].q1y_a0)
+                BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
+                BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
+                BigInt("0x" + pairingTestVector[i].points[0].q1y_a1),
+                BigInt("0x" + pairingTestVector[i].points[0].q1y_a0)
             )
 
             let pairingRes = pairing(p1.pointNegate(), q1)

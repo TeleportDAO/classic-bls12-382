@@ -53,6 +53,20 @@ type G2Mul struct {
 	RsYA1  string `json:"rsy_a1"`
 }
 
+type PairingInput struct {
+	P1X   string `json:"p1x"`
+	P1Y   string `json:"p1y"`
+	Q1XA0 string `json:"q1x_a0"`
+	Q1XA1 string `json:"q1x_a1"`
+	Q1YA0 string `json:"q1y_a0"`
+	Q1YA1 string `json:"q1y_a1"`
+}
+
+type Pairing struct {
+	Points  []PairingInput `json:"points"`
+	Resault string         `json:"resault"`
+}
+
 func readCsv(path string) [][]string {
 	// Open the CSV file
 	file, err := os.Open(path)
@@ -78,6 +92,7 @@ func main() {
 	saveG1Mul("g1_mul.csv")
 	saveG2Add("g2_add.csv")
 	saveG2Mul("g2_mul.csv")
+	savePairing("pairing.csv")
 }
 
 func saveG1Add(path string) {
@@ -249,6 +264,63 @@ func g2Mul(ps, rs string) G2Mul {
 		RsXA1:  rs[128:256],
 		RsYA0:  rs[256:384],
 		RsYA1:  rs[384:512],
+	}
+}
+
+func savePairing(path string) {
+	records := readCsv(path)
+
+	thePairings := make([]Pairing, 0, len(records))
+
+	// Print each record
+	for _, record := range records {
+		record0Slice := make([]string, 0, len(record[0])/(128*6))
+
+		for i := 0; i < len(record[0])/(128*6); i++ {
+			record0Slice = append(record0Slice, record[0][128*6*i:128*6*(i+1)])
+		}
+
+		thePairing := pairing(record0Slice, record[1])
+		thePairings = append(thePairings, thePairing)
+	}
+
+	// Convert the slice to a JSON-encoded byte array
+	b, err := json.MarshalIndent(thePairings, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+
+	// Write the byte array to a file
+	file, err := os.Create("../fixtures/pairing2.json")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(b)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func pairing(ps []string, rs string) Pairing {
+	points := make([]PairingInput, 0, len(ps))
+	for _, p := range ps {
+		pairing := PairingInput{
+			P1X:   p[:128],
+			P1Y:   p[128:256],
+			Q1XA0: p[256:384],
+			Q1XA1: p[384:512],
+			Q1YA0: p[512:640],
+			Q1YA1: p[640:],
+		}
+
+		points = append(points, pairing)
+	}
+
+	return Pairing{
+		Points:  points,
+		Resault: rs,
 	}
 }
 
