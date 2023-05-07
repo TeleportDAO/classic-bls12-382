@@ -16,8 +16,8 @@ export function sign(privateKey: bigint, hashedMessage: point): point {
     return pointMul(privateKey, hashedMessage)
 }
 
-export function verify(privateKey: bigint, hashedMessage: point): Boolean {
-    let pairingRes1 = pairing(derviePublickey(privateKey).pointNegate(), hashedMessage)
-    let pairingRes2 = pairing(G, sign(privateKey, hashedMessage))
+export function verify(publicKey: point, signature: point, hashedMessage: point): Boolean {
+    let pairingRes1 = pairing(publicKey.pointNegate(), hashedMessage)
+    let pairingRes2 = pairing(G, signature)
     return pairingRes1.mul(pairingRes2).equalOne()
 }
