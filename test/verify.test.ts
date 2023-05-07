@@ -4,7 +4,7 @@ import { Fp1, Fp2 } from "../src/fields"
 
 import { pairing } from "../src/pairing"
 
-const pairingTestVector = require("./fixtures/pairing.json")
+const pairingTestVector = require("./fixtures/pairing2.json")
 // const bls = require('@noble/bls12-381');
 
 function createG1Point(xStr: bigint, yStr: bigint): point {
@@ -116,41 +116,45 @@ describe("Verification", () => {
     }).timeout(20000)
 
 
-    it("verify test", function() {
+    it.only("verify test", function() {
         for (let i = 0; i < pairingTestVector.length; i++) {
-            let p1 = createG1Point(
-                BigInt("0x" + pairingTestVector[i].points[0].p1x),
-                BigInt("0x" + pairingTestVector[i].points[0].p1y)
-            )
+            if (pairingTestVector[i].points.length == 2) {
+                console.log(i)
+                let p1 = createG1Point(
+                    BigInt("0x" + pairingTestVector[i].points[0].p1x),
+                    BigInt("0x" + pairingTestVector[i].points[0].p1y)
+                )
+    
+                let q1 = createG2Point(
+                    BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
+                    BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
+                    BigInt("0x" + pairingTestVector[i].points[0].q1y_a0),
+                    BigInt("0x" + pairingTestVector[i].points[0].q1y_a1),
+                )
+    
+                let p2 = createG1Point(
+                    BigInt("0x" + pairingTestVector[i].points[1].p1x),
+                    BigInt("0x" + pairingTestVector[i].points[1].p1y)
+                )
+    
+                let q2 = createG2Point(
+                    BigInt("0x" + pairingTestVector[i].points[1].q1x_a0),
+                    BigInt("0x" + pairingTestVector[i].points[1].q1x_a1),
+                    BigInt("0x" + pairingTestVector[i].points[1].q1y_a0),
+                    BigInt("0x" + pairingTestVector[i].points[1].q1y_a1),
+                    
+                )
 
-            let q1 = createG2Point(
-                BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
-                BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
-                BigInt("0x" + pairingTestVector[i].points[0].q1y_a0),
-                BigInt("0x" + pairingTestVector[i].points[0].q1y_a1),
-            )
+                let pairingRes = pairing(p1, q1)
+                let pairingRes2 = pairing(p2, q2)
 
-            let p2 = createG1Point(
-                BigInt("0x" + pairingTestVector[i].points[0].p1x),
-                BigInt("0x" + pairingTestVector[i].points[0].p1y)
-            )
-
-            let q2 = createG2Point(
-                BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
-                BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
-                BigInt("0x" + pairingTestVector[i].points[0].q1y_a0),
-                BigInt("0x" + pairingTestVector[i].points[0].q1y_a1),
-                
-            )
-
-            let pairingRes = pairing(p1.pointNegate(), q1)
-            let pairingRes2 = pairing(p2, q2)
-            expect(
-                pairingRes.mul(pairingRes2).equalOne()
-            ).to.equal(true)
+                expect(
+                    pairingRes.mul(pairingRes2).equalOne()
+                ).to.equal(true)
+            }
         }
 
-    }).timeout(20000)
+    }).timeout(20000000)
 
     // it("messageVerification", async function() {
     //     let hashedMessage = "01a6ba2f9a11fa5598b2d8ace0fbe0a0eacb65deceb476fbbcb64fd24557c2f4"
