@@ -127,5 +127,5 @@ function pairing(p: point, q: point): Fp12 {
         return zeroFp12;
     }
 }
-  
+
 export { pairing, miller, doubleEval, addEval }

@@ -4,7 +4,8 @@
   "description": "an implementation of bls12-381 in typescript",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register test/*.test.ts"
+    "test": "mocha -r ts-node/register test/*.test.ts",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,13 @@
     "@ethersproject/bignumber": "^5.7.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",
+    "husky": "^8.0.3",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
