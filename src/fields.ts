@@ -2,9 +2,8 @@
 let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
 let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 
-function mod(a: bigint, b: bigint) {
-    const res = a % b;
-    return res >= 0n ? res : b + res;
+function mod(a: bigint, b: bigint): bigint {
+    return ((a % b) + b) % b;
 }
 
 // binary extended euclidean algorithm
@@ -68,7 +67,7 @@ interface Fp{
 class Fp1 implements Fp {
     public a0: bigint;
 	constructor(a0: bigint){
-      	this.a0 = a0;
+      	this.a0 = mod(a0, order);
     }
   	displayInfo() {
         console.log("a0: ", this.a0)

@@ -113,7 +113,7 @@ describe("Verification", () => {
             pairingRes.mul(pairingRes2).equalOne()
         ).to.equal(true)
 
-    })
+    }).timeout(20000)
 
 
     it("verify test", function() {

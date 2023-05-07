@@ -2,6 +2,7 @@ import { order } from "./fields";
 import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
 import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt } from "./fields";
 
+// TODO: separate point class to g1 point and g2 point
 class point {
     public x: Fp;
     public y: Fp;
