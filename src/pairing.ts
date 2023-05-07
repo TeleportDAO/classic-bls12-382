@@ -1,7 +1,7 @@
 import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
-import { mod, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
+import { mod, powHelper, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
 import { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 } from "./fields"
-import { untwist, pointDouble, pointAdd, powHelper, point } from "./points"
+import { untwist, pointDouble, pointAdd, point } from "./points"
 
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
