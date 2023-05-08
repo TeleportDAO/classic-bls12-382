@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/TeleportDAO/bls12-381#readme",
   "dependencies": {
-    "@ethersproject/bignumber": "^5.7.0"
+    "@ethersproject/bignumber": "^5.7.0",
+    "commitlint": "^17.6.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
