@@ -62,6 +62,7 @@ interface Fp{
     eq(y: any): Boolean;
     fromBigInt(x: bigint): any;
     zero(): any;
+    one(): any;
 }
 
 class Fp1 implements Fp {
@@ -114,6 +115,9 @@ class Fp1 implements Fp {
     }
     zero(): Fp1 {
         return zeroFp1
+    }
+    one(): Fp1 {
+        return oneFp1
     }
 }
 
@@ -189,6 +193,9 @@ class Fp2 implements Fp {
     }
     zero(): Fp2 {
         return zeroFp2
+    }
+    one(): Fp2 {
+        return oneFp2
     }
 }
 
@@ -293,6 +300,9 @@ class Fp6 implements Fp {
     zero(): Fp6 {
         return zeroFp6
     }
+    one(): Fp6 {
+        return oneFp6
+    }
 }
 
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
@@ -358,13 +368,17 @@ class Fp12 implements Fp {
     zero(): Fp12 {
         return zeroFp12
     }
+    one(): Fp12 {
+        return oneFp12
+    }
 }
 
 function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
-    let accum = oneFp12;
+    // let accum = oneFp12;
+    let accum = a0.one();
     while (exp > 0n){
         if ((exp & 1n) != 0n) {
-            accum = accum.mul(a0 as Fp12);
+            accum = accum.mul(a0);
         }
 
         exp = exp >> 1n;

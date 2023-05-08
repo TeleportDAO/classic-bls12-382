@@ -2,39 +2,13 @@ import { expect } from "chai"
 import { point } from "../src/points"
 import { Fp1, Fp2, fp1FromBigInt } from "../src/fields"
 import { derviePublickey, verify, sign, G} from "../src/bls"
-
 import { pairing } from "../src/pairing"
+import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")
 
-function createG1Point(xStr: bigint, yStr: bigint): point {
-    return new point(
-        new Fp1(xStr),
-        new Fp1(yStr),
-        false
-    )
-}
 
-function createG2Point(
-    xStr_a0: bigint, 
-    xStr_a1: bigint, 
-    yStr_a0: bigint,
-    yStr_a1: bigint,
-): point {
-    return new point(
-        new Fp2(
-            new Fp1(xStr_a0),
-            new Fp1(xStr_a1),
-        ),
-        new Fp2(
-            new Fp1(yStr_a0),
-            new Fp1(yStr_a1),
-        ),
-        false
-    )
-}
-
-describe.only("Verification", () => {
+describe("Verification", () => {
 
     // it("check pairing tests", function() {
 
