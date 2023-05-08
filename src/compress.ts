@@ -70,7 +70,7 @@ function squareRootInFiniteField(n: bigint, p: bigint): bigint[] {
     return [root1, root2];
 }
 
-function g1PointCompress(p: point) :string {
+function g1PointCompress(p: point): string {
 
   if (p.isInSubGroup()) {
     let X = p.x as Fp1
@@ -87,7 +87,7 @@ function g1PointCompress(p: point) :string {
   }
 }
 
-function uncompressG1Point(theHex: string) :point {
+function uncompressG1Point(theHex: string): point {
 
   let flaggedValue = BigInt(theHex)
 
@@ -113,3 +113,4 @@ function uncompressG1Point(theHex: string) :point {
   }
 }
 
+export { g1PointCompress, uncompressG1Point }
