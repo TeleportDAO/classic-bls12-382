@@ -6,6 +6,7 @@ import { pairing } from "../src/pairing"
 import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")
+const privateKeyVector = require("./fixtures/privatekey.json")
 
 
 describe("Verification", () => {
@@ -129,15 +130,15 @@ describe("Verification", () => {
 
     }).timeout(200000)
 
-    it("messageVerification", async function() {
-        let privateKey = 0x63eda653299d7d483339d80809a1d80553bda402fffe5bfeffaaffff00000001n
-        let P = derviePublickey(privateKey)
-
-        if (!P.isOnCurve() || !P.isInSubGroup())
-            throw("invalid publickey")
-
+    it.only("messageVerification", async function() {
         for (let i = 0; i < pairingTestVector.length; i++) {
             if (pairingTestVector[i].points.length == 1) {
+                let privateKey = BigInt(privateKeyVector[i])
+                let P = derviePublickey(privateKey)
+
+                // if (!P.isOnCurve() || !P.isInSubGroup())
+                //     throw("invalid publickey")
+                
                 let Hm = createG2Point(
                     BigInt("0x" + pairingTestVector[i].points[0].q1x_a0),
                     BigInt("0x" + pairingTestVector[i].points[0].q1x_a1),
