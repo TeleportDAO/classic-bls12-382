@@ -1,4 +1,4 @@
-import { pointMul, point } from "./points"
+import { pointMul, point, pointAdd } from "./points"
 import { fp1FromBigInt } from "./fields";
 import { pairing } from "../src/pairing"
 
@@ -19,5 +19,55 @@ export function sign(privateKey: bigint, hashedMessage: point): point {
 export function verify(publicKey: point, signature: point, hashedMessage: point): Boolean {
     let pairingRes1 = pairing(publicKey.pointNegate(), hashedMessage)
     let pairingRes2 = pairing(G, signature)
+    return pairingRes1.mul(pairingRes2).equalOne()
+}
+
+export function aggregatePublicKeys(pubKeys: point[]): point {
+
+    let theType = typeof pubKeys[0].x
+
+    let pointSum = pubKeys[0].pointAtInfinity()
+
+    for( let i = 0; i < pubKeys.length; i++) {
+        if( typeof pubKeys[i].x != theType) {
+            throw "error: inconsistent types"
+        }
+        theType = typeof pubKeys[i].x
+
+        pointSum = pointAdd(pointSum, pubKeys[i])
+    }
+
+    return pointSum
+}
+
+export function aggregateSignatures(signatures: point[]): point {
+
+    let theType = typeof signatures[0].x
+
+    let pointSum = signatures[0].pointAtInfinity()
+
+    for( let i = 0; i < signatures.length; i++) {
+        if( typeof signatures[i].x != theType) {
+            throw "error: inconsistent types"
+        }
+        theType = typeof signatures[i].x
+
+        pointSum = pointAdd(pointSum, signatures[i])
+    }
+
+    return pointSum
+}
+
+
+export function verifyBatch(publicKeys: point[], signatures: point[], hashedMessage: point): Boolean {
+    let pairingRes1 = pairing(
+        aggregatePublicKeys(publicKeys).pointNegate(), 
+        hashedMessage
+    )
+    let pairingRes2 = pairing(
+        G, 
+        aggregateSignatures(signatures)
+    )
+    
     return pairingRes1.mul(pairingRes2).equalOne()
 }
