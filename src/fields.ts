@@ -1,5 +1,7 @@
-
+// curve x = -0xd201000000010000
+// BLS field modulus which is equal to ⅓(x-1)^2(x^4 - x^2 + 1) + x
 let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
+// BLS subgroup order which is equal to (x^4 - x^2 + 1)
 let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 
 function mod(a: bigint, b: bigint): bigint {
@@ -7,7 +9,12 @@ function mod(a: bigint, b: bigint): bigint {
 }
 
 // binary extended euclidean algorithm
-const beea = (
+// used this algorithm to find inverse of u mod v
+// actual beea finds x1 and x2 which u * x1 + v * x2 = gcd(u, v) without using division
+// since order is a prime number, gcd(this, order) = 1 and 
+// so u * x1 + v * x2 (mod v) = u * x1 (mod v) = 1, therefore x1 is inverse of u
+
+const modifiedBeea = (
     u: bigint, 
     v: bigint, 
     x1: bigint, 
@@ -75,7 +82,7 @@ class Fp1 implements Fp {
     }
     inv(): Fp1{
         return new Fp1(
-            beea(
+            modifiedBeea(
                 this.a0,
                 order, 
                 1n, 
@@ -124,6 +131,9 @@ class Fp1 implements Fp {
 let zeroFp1 = new Fp1 (0n)
 let oneFp1 = new Fp1 (1n)
 
+// form of elements of Fp2: a0 + a1u
+// ai-s are member of Fp
+// u^2 + 1 = 0
 class Fp2 implements Fp {
     public a0: Fp1;
     public a1: Fp1;
@@ -162,6 +172,7 @@ class Fp2 implements Fp {
             this.a1.sub(y.a1)
         )
     }
+    // using karatsuba algorithm for multiplication
     mul(y: Fp2): Fp2 {
         return new Fp2(
             (
@@ -179,6 +190,7 @@ class Fp2 implements Fp {
     equalOne(): Boolean {
         return this.a1.eq(zeroFp1) && this.a0.eq(oneFp1)
     }
+    // * (u + 1)
     mulNonres(): Fp2 {
         return new Fp2(
             this.a0.sub(this.a1),
@@ -218,6 +230,9 @@ function fp12FromBigInt(x: bigint): Fp12 {
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 
+// form of elements of Fp6: b0 + b1v + b2v^2
+// bi-s are member of Fp2
+// v^3 - (u + 1) = 0
 class Fp6 implements Fp {
     public a0: Fp2;
     public a1: Fp2;
@@ -269,6 +284,7 @@ class Fp6 implements Fp {
             this.a2.sub(y.a2)
         )
     }
+    // TODO can be modified using karatsuba algorithm
     mul(y: Fp6): Fp6 {
         let t0 = this.a0.mul(y.a0)
         let t1 = (this.a0.mul(y.a1)).add(this.a1.mul(y.a0))
@@ -284,6 +300,8 @@ class Fp6 implements Fp {
     equalOne(): Boolean {
         return this.a2.eq(zeroFp2) && this.a1.eq(zeroFp2) && this.a0.eq(oneFp2)
     }
+
+    // * v
     mulNonres(): Fp6 {
         return new Fp6(
             this.a2.mulNonres(),
@@ -308,6 +326,9 @@ class Fp6 implements Fp {
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
 
+// form of elements of Fp12: c0 + c1w
+// ci-s are member of Fp6
+// w^2 - v = 0
 class Fp12 implements Fp {
     public a0: Fp6;
     public a1: Fp6;
@@ -321,7 +342,6 @@ class Fp12 implements Fp {
         console.log("a1: ", this.a1.displayInfo())
     }
     inv(): Fp12 {
-
         let factor = 
             ((
                 this.a0.mul(this.a0)
@@ -347,6 +367,8 @@ class Fp12 implements Fp {
             this.a1.sub(y.a1)
         )
     }
+
+    // using karatsuba algorithm for multiplication
     mul(y: Fp12): Fp12 {
         return new Fp12(
             (this.a0.mul(y.a0)).add((this.a1.mul(y.a1).mulNonres())),
@@ -373,8 +395,7 @@ class Fp12 implements Fp {
     }
 }
 
-function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
-    // let accum = oneFp12;
+function powHelper(a0: Fp, exp: bigint): Fp {
     let accum = a0.one();
     while (exp > 0n){
         if ((exp & 1n) != 0n) {
@@ -384,17 +405,7 @@ function powHelper(a0: Fp, exp: bigint, result: Fp): Fp {
         exp = exp >> 1n;
         a0 = a0.mul(a0);
     }
-
     return accum;
-    // if (exp <= 1n) {
-    //   return a0;
-    // }
-    // accum = powHelper(a0, exp >> 1n, result);
-    // if (mod(exp, 2n) == 0n) {
-    //   return accum.mul(accum);
-    // } else {
-    //   return accum.mul(accum).mul(a0);
-    // }
 }
 
 

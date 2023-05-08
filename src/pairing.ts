@@ -122,7 +122,7 @@ function pairing(p: point, q: point): Fp12 {
         q.isOnCurve() && 
         q.isInSubGroup()
     ) {
-        return powHelper(miller(p, q), ((order ** 12n) - 1n) / groupOrder, oneFp12) as Fp12
+        return powHelper(miller(p, q), ((order ** 12n) - 1n) / groupOrder) as Fp12
     } else {
         return zeroFp12;
     }

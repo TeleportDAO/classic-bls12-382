@@ -21,7 +21,7 @@ describe("Fields", () => {
         for (let i = 0; i < exp; i++)
             mulRes = mulRes.mul(fp)
         
-        let powRes = powHelper(fp, exp, fp1FromBigInt(1n))
+        let powRes = powHelper(fp, exp)
         let mustTrue = powRes.eq(mulRes)
 
         expect(
@@ -53,7 +53,7 @@ describe("Fields", () => {
         for (let i = 0; i < exp; i++)
             mulRes = mulRes.mul(fp2)
         
-        let powRes = powHelper(fp2, exp, fp2FromBigInt(1n))
+        let powRes = powHelper(fp2, exp)
         let mustTrue = powRes.eq(mulRes)
 
         expect(
@@ -117,7 +117,7 @@ describe("Fields", () => {
         for (let i = 0; i < exp; i++)
             mulRes = mulRes.mul(fp6)
         
-        let powRes = powHelper(fp6, exp, fp6FromBigInt(1n))
+        let powRes = powHelper(fp6, exp)
         let mustTrue = powRes.eq(mulRes)
 
         expect(
@@ -204,7 +204,7 @@ describe("Fields", () => {
         for (let i = 0; i < exp; i++)
             mulRes = mulRes.mul(fp12)
         
-        let powRes = powHelper(fp12, exp, fp12FromBigInt(1n))
+        let powRes = powHelper(fp12, exp)
         let mustTrue = powRes.eq(mulRes)
 
         expect(
