@@ -8,6 +8,23 @@ function mod(a: bigint, b: bigint): bigint {
     return ((a % b) + b) % b;
 }
 
+function modPow(base: Fp, exponent: bigint, modulus: bigint): Fp {
+    if (exponent === 0n) return base.one();
+    if (exponent === 1n) return base;
+    // if (modulus === 1n) return base.zero();
+    // let result = 1n;
+    let result: Fp = base.one();
+    // base = mod(base, modulus);
+    while (exponent > 0n) {
+      if (exponent % 2n === 1n) {
+        result = result.mul(base)
+      }
+      exponent = exponent >> 1n
+      base = base.mul(base)
+    }
+    return result;
+}
+
 // binary extended euclidean algorithm
 // used this algorithm to find inverse of u mod v
 // actual beea finds x1 and x2 which u * x1 + v * x2 = gcd(u, v) without using division
@@ -66,6 +83,7 @@ interface Fp{
     mul(y: any): any;
     equalOne(): Boolean;
     mulNonres(): any;
+    pow(a: bigint): any;
     eq(y: any): Boolean;
     fromBigInt(x: bigint): any;
     zero(): any;
@@ -113,6 +131,13 @@ class Fp1 implements Fp {
         return new Fp1(
             this.a0
         )
+    }
+    pow(a: bigint): Fp1 {
+        return modPow(
+            this, 
+            a,
+            order
+        ) as Fp1
     }
     eq(y: Fp1): Boolean{
         return this.a0 == y.a0
@@ -196,6 +221,13 @@ class Fp2 implements Fp {
             this.a0.sub(this.a1),
             this.a1.add(this.a0)
         )
+    }
+    pow(a: bigint): Fp2 {
+        return modPow(
+            this, 
+            a,
+            order
+        ) as Fp2
     }
     eq(y: Fp2): Boolean{
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
@@ -309,6 +341,13 @@ class Fp6 implements Fp {
             this.a1
         )
     }
+    pow(a: bigint): Fp6 {
+        return modPow(
+            this, 
+            a,
+            order
+        ) as Fp6
+    }
     eq(y: Fp6): Boolean {
         return this.a2.eq(y.a2) && this.a1.eq(y.a1) && this.a0.eq(y.a0)
     } 
@@ -380,6 +419,13 @@ class Fp12 implements Fp {
     }
     mulNonres(): Fp12{
         throw "error: not mul non res"
+    }
+    pow(a: bigint): Fp12 {
+        return modPow(
+            this, 
+            a,
+            order
+        ) as Fp12
     }
     eq(y: Fp12): Boolean {
         return this.a1.eq(y.a1) && this.a0.eq(y.a0)
