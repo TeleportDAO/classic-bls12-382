@@ -130,7 +130,7 @@ describe("Verification", () => {
 
     }).timeout(200000)
 
-    it.only("messageVerification", async function() {
+    it("messageVerification", async function() {
         for (let i = 0; i < pairingTestVector.length; i++) {
             if (pairingTestVector[i].points.length == 1) {
                 let privateKey = BigInt(privateKeyVector[i])

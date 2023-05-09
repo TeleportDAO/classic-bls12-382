@@ -89,7 +89,7 @@ function g1PointCompress(p: point): string {
 
 function uncompressG1Point(theHex: string): point {
 
-  let flaggedValue = BigInt(theHex)
+  let flaggedValue = BigInt("0x" + theHex)
 
   if (flaggedValue >= POW_2_383) {
 
@@ -113,6 +113,7 @@ function uncompressG1Point(theHex: string): point {
   }
 }
 
+// https://eips.ethereum.org/assets/eip-3068/2012-685_Square_Root_Even_Ext.pdf
 function Fp2sqrt(a: Fp2): Fp2 {
   let a1 = a.pow((order - 3n) / 4n)
   let alpha =  a1.mul((a1.mul(a)))
@@ -166,14 +167,17 @@ function g2PointCompress(p: point): string {
 
 function uncompressG2Point(theHex: string): point {
 
-  let flaggedx1 = BigInt(theHex.slice(0, 96))
-  let flaggedx0 = BigInt(theHex.slice(96))
+  let flaggedx1 = BigInt("0x" + theHex.slice(0, 96))
+  let flaggedx0 = BigInt("0x" + theHex.slice(96))
+  // console.log("theHex ", theHex)
+  // console.log("flaggedx1 ", flaggedx1.toString(16))
+  // console.log("flaggedx0 ", flaggedx0.toString(16))
 
   if (flaggedx1 >= POW_2_383) {
 
     let X = new Fp2(
       fp1FromBigInt(flaggedx0),
-      fp1FromBigInt(flaggedx1)
+      fp1FromBigInt(mod(flaggedx1, POW_2_381))
     )
 
     let iPlusOneMul4 = new Fp2(
@@ -208,4 +212,4 @@ function uncompressG2Point(theHex: string): point {
   }
 }
 
-export { g1PointCompress, uncompressG1Point }
+export { g1PointCompress, uncompressG1Point, g2PointCompress, uncompressG2Point }
