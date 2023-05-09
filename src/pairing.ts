@@ -1,8 +1,9 @@
-import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
-import { mod, powHelper, fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
-import { zeroFp1, oneFp1, zeroFp2, oneFp2, zeroFp6, oneFp6, zeroFp12, oneFp12 } from "./fields"
+import { Fp1, Fp12 } from "./fields"
+import { mod, powHelper, fp12FromBigInt, order, groupOrder } from "./fields"
+import { zeroFp12 } from "./fields"
 import { untwist, pointDouble, pointAdd, point } from "./points"
 
+// calculate Tz(Q) / V2z(Q)
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
 
@@ -55,6 +56,7 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     )
 }
 
+// calculate Lz,p(Q) / Vz+p(Q)
 function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideR = untwist(fp2PointR)
     let wideQ = untwist(fp2PointQ)
@@ -89,17 +91,19 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
     }
 }
 
+// implementation based on https://crypto.stanford.edu/pbc/thesis.pdf
+// miller algorithm for Tate pairing
 function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 
     let iterations : boolean[] = [];
 
+    // curve x
     let b = 0xd201000000010000n
 
     while (b > 0n) {
         let theBool = mod(b, 2n) > 0n
         
         iterations.push(theBool);
-        // b >>= BigNumber.from(1);
         b = b >> 1n;
     }
 
@@ -108,10 +112,7 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
     return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(1n))
 }
 
-
-
 function pairing(p: point, q: point): Fp12 {
-
     if ( p.isInf || q.isInf ) {
         return zeroFp12;
     }

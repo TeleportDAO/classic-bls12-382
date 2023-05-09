@@ -135,7 +135,6 @@ let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
-// TODO: test 
 function untwist(fp2Point: point): point {
     // FIXME: what if the point is point at infinity
 
