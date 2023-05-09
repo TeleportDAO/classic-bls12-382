@@ -112,6 +112,9 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
     return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(1n))
 }
 
+// calculate pairing function without final exponentiation
+// for some x we have pairing(g1, sigma)^x = pairing(pk, H(m))^x
+// x happens to be (order^12 - 1) / groupOrder
 function pairing(p: point, q: point): Fp12 {
     if ( p.isInf || q.isInf ) {
         return zeroFp12;
@@ -123,10 +126,15 @@ function pairing(p: point, q: point): Fp12 {
         q.isOnCurve() && 
         q.isInSubGroup()
     ) {
-        return powHelper(miller(p, q), ((order ** 12n) - 1n) / groupOrder) as Fp12
+        return miller(p, q)
     } else {
         return zeroFp12;
     }
 }
 
-export { pairing, miller, doubleEval, addEval }
+// raise calculated miller output to power (order^12 - 1) / groupOrder
+function finalExponentiate(p: Fp12) {
+    return powHelper(p, ((order ** 12n) - 1n) / groupOrder) as Fp12 
+}
+
+export { pairing, miller, doubleEval, addEval, finalExponentiate }

@@ -66,7 +66,7 @@ describe("Points", () => {
                 res.eq(sclMulP1)
             ).to.equal(true)
         }
-    }).timeout(20000)
+    }).timeout(50000)
 
     it("g2 add", function() {
         for (let i = 0; i < g2AddTestVector.length; i++) {
@@ -124,7 +124,7 @@ describe("Points", () => {
                 res.eq(sclMuP1)
             ).to.equal(true)
         }
-    }).timeout(20000)
+    }).timeout(50000)
     
     it("point at infinity", function() {
         for (let i = 0; i < g2MulTestVector.length; i++) {

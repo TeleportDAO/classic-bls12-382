@@ -158,7 +158,7 @@ let oneFp1 = new Fp1 (1n)
 
 // form of elements of Fp2: a0 + a1u
 // ai-s are member of Fp
-// u^2 + 1 = 0
+// calculate u from u^2 + 1 = 0 which is irreducible in fp1
 class Fp2 implements Fp {
     public a0: Fp1;
     public a1: Fp1;
@@ -264,7 +264,7 @@ let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 
 // form of elements of Fp6: b0 + b1v + b2v^2
 // bi-s are member of Fp2
-// v^3 - (u + 1) = 0
+// calculate v from v^3 - (u + 1) = 0 which is irreducible in fp2
 class Fp6 implements Fp {
     public a0: Fp2;
     public a1: Fp2;
@@ -316,17 +316,15 @@ class Fp6 implements Fp {
             this.a2.sub(y.a2)
         )
     }
-    // TODO can be modified using karatsuba algorithm
+    // using karatsuba algorithm for multiplication
     mul(y: Fp6): Fp6 {
         let t0 = this.a0.mul(y.a0)
-        let t1 = (this.a0.mul(y.a1)).add(this.a1.mul(y.a0))
-        let t2 = (this.a0.mul(y.a2)).add(this.a1.mul(y.a1)).add(this.a2.mul(y.a0))
-        let t3 = ((this.a1.mul(y.a2)).add(this.a2.mul(y.a1))).mulNonres()
-        let t4 = (this.a2.mul(y.a2)).mulNonres()
+        let t1 = this.a1.mul(y.a1)
+        let t2 = this.a2.mul(y.a2)
         return new Fp6(
-            t0.add(t3),
-            t1.add(t4),
-            t2
+            t0.add(this.a1.add(this.a2).mul(y.a1.add(y.a2)).sub(t1.add(t2)).mulNonres()),
+            this.a0.add(this.a1).mul(y.a0.add(y.a1)).sub(t0.add(t1)).add(t2.mulNonres()),
+            t1.add(this.a0.add(this.a2).mul(y.a0.add(y.a2)).sub(t0.add(t2)))
         )
     }
     equalOne(): Boolean {
@@ -367,7 +365,7 @@ let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
 
 // form of elements of Fp12: c0 + c1w
 // ci-s are member of Fp6
-// w^2 - v = 0
+// calculate w from w^2 - v = 0 which is irreducible inn fp6
 class Fp12 implements Fp {
     public a0: Fp6;
     public a1: Fp6;

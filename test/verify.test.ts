@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { point } from "../src/points"
 import { Fp1, Fp2, fp1FromBigInt } from "../src/fields"
 import { derviePublickey, verify, sign, G} from "../src/bls"
-import { pairing } from "../src/pairing"
+import { pairing, finalExponentiate } from "../src/pairing"
 import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")
@@ -123,7 +123,7 @@ describe("Verification", () => {
                 let pairingRes2 = pairing(p2, q2)
 
                 expect(
-                    pairingRes.mul(pairingRes2).equalOne()
+                    finalExponentiate(pairingRes.mul(pairingRes2)).equalOne()
                 ).to.equal(true)
             }
         }
@@ -157,7 +157,7 @@ describe("Verification", () => {
                 let pairingRes2 = pairing(G, S)
             
                 expect(
-                    pairingRes.mul(pairingRes2).equalOne()
+                    finalExponentiate(pairingRes.mul(pairingRes2)).equalOne()
                 ).to.equal(true)
             }
         }
