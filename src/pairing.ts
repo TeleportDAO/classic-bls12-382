@@ -133,7 +133,7 @@ function pairing(p: point, q: point): Fp12 {
 }
 
 // raise calculated miller output to power (order^12 - 1) / groupOrder
-function finalExponentiate(p: Fp12) {
+function finalExponentiate(p: Fp12): Fp12 {
     return powHelper(p, ((order ** 12n) - 1n) / groupOrder) as Fp12 
 }
 

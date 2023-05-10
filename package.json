@@ -4,6 +4,7 @@
   "description": "an implementation of bls12-381 in typescript",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "mocha -r ts-node/register test/*.test.ts",
     "prepare": "husky install"
   },
@@ -29,9 +30,13 @@
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",
     "husky": "^8.0.3",
+    "lerna": "^6.6.2",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

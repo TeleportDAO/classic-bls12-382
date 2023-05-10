@@ -11,7 +11,7 @@ function mod(a: bigint, b: bigint): bigint {
 function modPow(base: Fp, exponent: bigint, modulus: bigint): Fp {
     if (exponent === 0n) return base.one();
     if (exponent === 1n) return base;
-    // if (modulus === 1n) return base.zero();
+    if (modulus === 1n) return base.zero();
     // let result = 1n;
     let result: Fp = base.one();
     // base = mod(base, modulus);
