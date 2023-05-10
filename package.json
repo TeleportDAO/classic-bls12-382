@@ -2,9 +2,9 @@
   "name": "bls12-381",
   "version": "0.0.1",
   "description": "an implementation of bls12-381 in typescript",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.esm.json",
     "test": "mocha -r ts-node/register test/*.test.ts",
     "prepare": "husky install"
   },

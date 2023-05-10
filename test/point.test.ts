@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { point, pointAdd, pointMul } from '../src/points';
-import { Fp1, Fp2, Fp6, Fp12, groupOrder } from '../src/fields';
+import { point, pointAdd, pointMul } from '../dist/points';
+import { Fp1, Fp2, Fp6, Fp12, groupOrder } from '../dist/fields';
 import { createG1Point, createG2Point } from "./test_utils"
 
 const g1AddTestVector = require("./fixtures/g1_add.json")

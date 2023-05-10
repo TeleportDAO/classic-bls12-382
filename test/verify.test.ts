@@ -1,8 +1,6 @@
 import { expect } from "chai"
-import { point } from "../src/points"
-import { Fp1, Fp2, fp1FromBigInt } from "../src/fields"
-import { derviePublickey, verify, sign, G} from "../src/bls"
-import { pairing, finalExponentiate } from "../src/pairing"
+import { derviePublickey, verify, sign, G} from "../dist/bls"
+import { pairing, finalExponentiate } from "../dist/pairing"
 import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")

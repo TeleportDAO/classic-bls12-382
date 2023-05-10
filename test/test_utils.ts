@@ -1,6 +1,6 @@
 
-import { point } from "../src/points"
-import { Fp1, Fp2, fp1FromBigInt } from "../src/fields"
+import { point } from "../dist/points"
+import { Fp1, Fp2, fp1FromBigInt } from "../dist/fields"
 
 function createG1Point(xStr: bigint, yStr: bigint): point {
     return new point(

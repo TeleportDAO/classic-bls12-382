@@ -1,8 +1,7 @@
 import { expect } from "chai"
-import { pointMul, point } from "../src/points"
-import { groupOrder } from "../src/fields"
-import { Fp1, Fp2 } from "../src/fields"
-import { pairing, finalExponentiate } from "../src/pairing"
+import { pointMul, point } from "../dist/points"
+import { groupOrder } from "../dist/fields"
+import { pairing, finalExponentiate } from "../dist/pairing"
 import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")
