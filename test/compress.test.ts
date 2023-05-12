@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { g1PointCompress, uncompressG1Point, g2PointCompress, uncompressG2Point } from "../dist/compress"
+import { g1PointCompress, uncompressG1Point, g2PointCompress, uncompressG2Point } from ".."
 import { createG1Point, createG2Point } from "./test_utils"
 
 const g1CompressTestVector = require("./fixtures/g1_compress.json")

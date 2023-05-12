@@ -1,8 +1,9 @@
 {
   "name": "@teleportdao/bls12-381",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "an implementation of bls12-381 in typescript",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
@@ -36,8 +37,5 @@
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }
