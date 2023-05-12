@@ -1,8 +1,9 @@
 {
-  "name": "bls12-381",
-  "version": "0.0.1",
+  "name": "@teleportdao/bls12-381",
+  "version": "0.0.2",
   "description": "an implementation of bls12-381 in typescript",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
     "test": "mocha -r ts-node/register test/*.test.ts",
