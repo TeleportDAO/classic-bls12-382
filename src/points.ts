@@ -49,42 +49,7 @@ class point {
                 this.x.fromBigInt(4n).mulNonres()
             )
         )
-        
-        // if (this.x instanceof Fp1) {
-        //     return this.isOnCurveG1()
-        // } else if (this.x instanceof Fp2) {
-        //     return this.isOnCurveG2()
-        // } else {
-        //     console.log("type of this.x: ", typeof this.x)
-        //     console.log("this.x: ",this.x)
-        //     throw Error("error")
-        // }
     }
-    // isOnCurveG1(): Boolean {
-    //     if (this.isInf) 
-    //         return false;
-
-    //     return this.y.mul(this.y).eq(
-    //         this.x.mul(
-    //             this.x.mul(this.x)
-    //         ).add(
-    //             this.x.fromBigInt(4n).mulNonres()
-    //         )
-    //     )
-    // }
-
-    // isOnCurveG2(): Boolean {
-    //     if (this.isInf) 
-    //         return false;
-
-    //     return this.y.mul(this.y).eq(
-    //         this.x.mul(
-    //             this.x.mul(this.x)
-    //         ).add(
-    //             this.x.fromBigInt(4n).mulNonres()
-    //         )
-    //     )
-    // }
     pointNegate(): point {
         return new point(
             this.x,

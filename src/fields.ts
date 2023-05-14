@@ -1,7 +1,12 @@
-// curve x = -0xd201000000010000
-// BLS field modulus which is equal to ⅓(x-1)^2(x^4 - x^2 + 1) + x
+/** 
+ * curve x = -0xd201000000010000
+ * BLS field modulus which is equal to ⅓(x-1)^2(x^4 - x^2 + 1) + x
+ */
 let order: bigint = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaabn
-// BLS subgroup order which is equal to (x^4 - x^2 + 1)
+
+/** 
+ * BLS subgroup order which is equal to (x^4 - x^2 + 1)
+ */ 
 let groupOrder: bigint = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n
 
 function mod(a: bigint, b: bigint): bigint {
@@ -25,12 +30,22 @@ function modPow(base: Fp, exponent: bigint, modulus: bigint): Fp {
     return result;
 }
 
-// binary extended euclidean algorithm
-// used this algorithm to find inverse of u mod v
-// actual beea finds x1 and x2 which u * x1 + v * x2 = gcd(u, v) without using division
-// since order is a prime number, gcd(this, order) = 1 and 
-// so u * x1 + v * x2 (mod v) = u * x1 (mod v) = 1, therefore x1 is inverse of u
-
+// Binary Extended Euclidean Algorithm
+/**
+ * Implements the modified Binary Extended Euclidean Algorithm (BEAA) for finding the
+ * multiplicative inverse of 'u' modulo 'v'.
+ * 
+ * The function also calculates x1 and x2 such that u * x1 + v * x2 = gcd(u, v) without
+ * using division. Since 'order' is a prime number, gcd(this, order) = 1 and
+ * u * x1 + v * x2 (mod v) = u * x1 (mod v) = 1, therefore x1 is the inverse of 'u'.
+ *
+ * @param {bigint} u - The value whose inverse is to be found.
+ * @param {bigint} v - The modulo for which the inverse is being calculated.
+ * @param {bigint} x1 - A value initialized to zero; will be updated during the algorithm execution.
+ * @param {bigint} x2 - A value initialized to zero; will be updated during the algorithm execution.
+ * @param {bigint} p - The prime order of the elliptic curve.
+ * @returns {bigint} The multiplicative inverse of 'u' modulo 'v'.
+ */
 const modifiedBeea = (
     u: bigint, 
     v: bigint, 
@@ -71,10 +86,12 @@ const modifiedBeea = (
         theInv = mod(x2, p)
     }
 
-    return theInv;
-    
+    return theInv; 
 }
 
+/**
+ * interface for finite fields (Fp1, Fp2, Fp6, Fp12)
+ */
 interface Fp{
   	displayInfo(): void;
     inv(): any;
@@ -90,6 +107,9 @@ interface Fp{
     one(): any;
 }
 
+/**
+ * form of elements of Fp1: a0
+ */
 class Fp1 implements Fp {
     public a0: bigint;
 	constructor(a0: bigint){
@@ -156,9 +176,11 @@ class Fp1 implements Fp {
 let zeroFp1 = new Fp1 (0n)
 let oneFp1 = new Fp1 (1n)
 
-// form of elements of Fp2: a0 + a1u
-// ai-s are member of Fp
-// calculate u from u^2 + 1 = 0 which is irreducible in fp1
+/**
+ * form of elements of Fp2: a0 + a1u
+ * ai-s are member of Fp
+ * calculate u from u^2 + 1 = 0 which is irreducible in fp1
+ */
 class Fp2 implements Fp {
     public a0: Fp1;
     public a1: Fp1;
@@ -262,9 +284,11 @@ function fp12FromBigInt(x: bigint): Fp12 {
 let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 
-// form of elements of Fp6: b0 + b1v + b2v^2
-// bi-s are member of Fp2
-// calculate v from v^3 - (u + 1) = 0 which is irreducible in fp2
+/**
+ * form of elements of Fp6: b0 + b1v + b2v^2
+ * bi-s are member of Fp2
+ * calculate v from v^3 - (u + 1) = 0 which is irreducible in fp2
+ */
 class Fp6 implements Fp {
     public a0: Fp2;
     public a1: Fp2;
@@ -363,9 +387,11 @@ class Fp6 implements Fp {
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 let oneFp6 = new Fp6 (oneFp2, zeroFp2, zeroFp2)
 
-// form of elements of Fp12: c0 + c1w
-// ci-s are member of Fp6
-// calculate w from w^2 - v = 0 which is irreducible inn fp6
+/**
+ * form of elements of Fp12: c0 + c1w
+ * ci-s are member of Fp6
+ * calculate w from w^2 - v = 0 which is irreducible inn fp6
+ */
 class Fp12 implements Fp {
     public a0: Fp6;
     public a1: Fp6;

@@ -17,11 +17,11 @@ This package is zero-dependency and bls12-381 signature schema is implemented as
 
 ## How to use
 
-    import {derviePublickey, g1PointCompress, uncompressG2Point, g2PointCompress, sign, verify} from "@teleportdao/bls12-381"
+    import {derivePublickey, g1PointCompress, uncompressG2Point, g2PointCompress, sign, verify} from "@teleportdao/bls12-381"
 
     function signAndVerify() {
         let privateKey = BigInt("0x12345678901234567890")
-        let pubKey = derviePublickey(privateKey)
+        let pubKey = derivePublickey(privateKey)
 
         let compressedPubKey = g1PointCompress(pubKey)
 
@@ -47,8 +47,8 @@ This package is zero-dependency and bls12-381 signature schema is implemented as
 
 ### functions
 
-#### `derviePublickey`
-    function derviePublickey(privateKey: bigint): point
+#### `derivePublickey`
+    function derivePublickey(privateKey: bigint): point
 
 #### `sign`
     function sign(privateKey: bigint, hashedMessage: point): point
