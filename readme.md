@@ -243,7 +243,7 @@ import {derivePublicKey, g1PointCompress, uncompressG2Point, g2PointCompress, si
         console.log("the compressed signature in hex format: ", compressedSignature)
 ```
 
-### Example 2: verify the signature
+### Example 3: verify the signature
 
 ```javascript
         let isVerified = verify(pubKey, signature, unCompressedHashedMsg)
@@ -253,6 +253,31 @@ import {derivePublicKey, g1PointCompress, uncompressG2Point, g2PointCompress, si
     }
 
     // it's possible to do implement the above functionality using blsSigner class and its methods
+```
+
+
+### Example 4: bls signer class
+
+```javascript
+    import {blsSigner} from "@teleportdao/bls12-381"
+
+    function signAndVerifyByBlsSigner() {
+        let privateKey = BigInt("0x12345678901234567890")
+        let theSigner = new blsSigner(privateKey)
+
+        console.log("the compressed public key in hex format: ")
+        theSigner.displayInfo()
+
+        let hashedMessage = "8273ecc619a16d8d34d71afdf701254a3a30f282ad505af908ecccf2c6e6b32d95fedfda1d331df12edd3a5d9485ade006d40654fa9de7336e478b207afe75575e663cc8c18df7ac6c659cc01249a726e4a67fe19dffcf06f6af5cf4e2523a1a"
+
+        let signature = theSigner.signHashedMsg(hashedMessage)
+
+        console.log("the compressed signature in hex format: ", signature)
+
+        let isVerified = theSigner.verify(theSigner.cpk, signature, hashedMessage)
+
+        console.log("the verification result: ", isVerified)
+    }
 ```
 
 ### ...

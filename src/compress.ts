@@ -8,19 +8,42 @@ const POW_2_381 = 2n ** 381n;
 const POW_2_382 = POW_2_381 * 2n; 
 const POW_2_383 = POW_2_382 * 2n;
 
-// TODO: use the modPow in fields.ts
+
+/**
+ * Computes the modular exponentiation of a given base raised to a given exponent under a given modulus.
+ * It uses the "exponentiation by squaring" algorithm to efficiently compute large powers.
+ *
+ * @param {bigint} base - The base number.
+ * @param {bigint} exponent - The exponent to which the base should be raised.
+ * @param {bigint} modulus - The modulus under which the operation should be performed.
+ * @returns {bigint} The result of (base ^ exponent) mod modulus.
+ */
 function modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
-    if (modulus === 1n) return 0n;
-    let result = 1n;
-    base = mod(base, modulus);
-    while (exponent > 0n) {
-      if (exponent % 2n === 1n) {
-        result = mod(result * base, modulus);
-      }
-      exponent = exponent >> 1n
-      base = mod(base * base, modulus);
+  // If modulus is 1, the result is always 0
+  if (modulus === 1n) return 0n;
+
+  // Initialize result variable to 1
+  let result = 1n;
+
+  // Compute base modulo modulus to handle cases where base is greater than modulus
+  base = mod(base, modulus);
+
+  // Continue the loop as long as the exponent is greater than 0
+  while (exponent > 0n) {
+    // If the exponent is odd, multiply the result by the base (modulo modulus)
+    if (exponent % 2n === 1n) {
+      result = mod(result * base, modulus);
     }
-    return result;
+
+    // Right shift the exponent by 1 bit (essentially divide it by 2)
+    exponent = exponent >> 1n;
+
+    // Square the base (modulo modulus) for the next iteration
+    base = mod(base * base, modulus);
+  }
+
+  // Return the final result
+  return result;
 }
 
 /**
@@ -93,12 +116,19 @@ function squareRootInFiniteField(n: bigint, p: bigint): bigint[] {
     return [root1, root2];
 }
 
+/**
+ * Compress a G1 point into hex format.
+ *
+ * @param {point} p - The G1 point to be compressed
+ * @returns {string} The compressed format of G1 point in hex
+ */
 function g1PointCompress(p: point): string {
 
   if (p.isInSubGroup()) {
     let X = p.x as Fp1
     let Y = p.y as Fp1
 
+    // the flag would be 1 if y was lexicographically the greatest (among y and -y)
     let yFlag = (Y.a0 * 2n) / order
 
     let flaggedValue = X.a0 + yFlag * POW_2_381 + POW_2_383
@@ -110,6 +140,12 @@ function g1PointCompress(p: point): string {
   }
 }
 
+/**
+ * Un-compress a G1 compressed point.
+ *
+ * @param {string} theHex The compressed format of G1 point in hex
+ * @returns {point} The G1 point 
+ */
 function uncompressG1Point(theHex: string): point {
 
   let flaggedValue = BigInt("0x" + theHex)
@@ -121,6 +157,7 @@ function uncompressG1Point(theHex: string): point {
     
     let ys = squareRootInFiniteField(X3Plus4, order)
 
+    // extract the flag to choose between y and -y
     let yFlag = mod(flaggedValue, POW_2_382) / POW_2_381
 
     let Y = (ys[0] *2n)/ order == yFlag ? ys[0] : ys[1]
@@ -176,6 +213,12 @@ function Fp2sqrt(a: Fp2): Fp2 {
   return x;
 }
 
+/**
+ * Compress a G2 point into hex format.
+ *
+ * @param {point} p - The G2 point to be compressed
+ * @returns {string} The compressed format of G2 point in hex
+ */
 function g2PointCompress(p: point): string {
 
   if (p.isInSubGroup()) {
@@ -184,6 +227,8 @@ function g2PointCompress(p: point): string {
 
     let flag: bigint
 
+    // the flag would be 1 if y.a1 was 0 and y.a0 lexicographically the greatest (among y.a0 and -y.a0)
+    // or would be 1 if y.a1 wasn't 0 and y.a1 lexicographically the greatest (among y.a1 and -y.a1)
     if (Y.a1.a0 == 0n) {
       flag = (Y.a0.a0 * 2n) / order
     } else {
@@ -200,6 +245,12 @@ function g2PointCompress(p: point): string {
   }
 }
 
+/**
+ * Un-compress a G2 compressed point.
+ *
+ * @param {string} theHex The compressed format of G2 point in hex
+ * @returns {point} The G2 point 
+ */
 function uncompressG2Point(theHex: string): point {
 
   let flaggedx1 = BigInt("0x" + theHex.slice(0, 96))
@@ -223,6 +274,7 @@ function uncompressG2Point(theHex: string): point {
 
     let flag: bigint
 
+    // extract the flag
     if (Y.a1.a0 == 0n) {
       flag = (Y.a0.a0 * 2n) / order
     } else {

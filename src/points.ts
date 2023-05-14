@@ -1,11 +1,23 @@
 import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
 import { mod } from "./fields";
 
-// TODO: separate point class to g1 point and g2 point
+
+/**
+ * Represents a point on an elliptic curve using two coordinates x and y.
+ * This class also includes several methods for working with points on the curve.
+ */
 class point {
     public x: Fp;
     public y: Fp;
     public isInf: Boolean;
+
+    /**
+     * Creates a new point object.
+     *
+     * @param {Fp} x - The x-coordinate of the point.
+     * @param {Fp} y - The y-coordinate of the point.
+     * @param {Boolean} isInf - A boolean flag indicating if the point represents the point at infinity.
+     */
     constructor(
         x: Fp, 
         y: Fp, 
@@ -19,16 +31,33 @@ class point {
             this.isInf = isInf;
         }
     }
-  	displayInfo(){
+
+    /**
+     * Displays information about the point, including the x and y coordinates.
+     */
+    displayInfo(){
         console.log("x:")
         this.x.displayInfo()
         console.log("y:")
         this.y.displayInfo()
     }
+
+    /**
+     * Checks if the point is in the curve's subgroup.
+     *
+     * @returns {Boolean} True if the point is in the subgroup, false otherwise.
+     */
     isInSubGroup(): Boolean {
         let mustInf = pointMul(groupOrder, this)
         return mustInf.isInf;
     }
+
+    /**
+     * Compares two points for equality.
+     *
+     * @param {point} q - The other point to compare with.
+     * @returns {Boolean} True if the points are equal, false otherwise.
+     */
     eq(q: point): Boolean {
         if (this.isInf) {
             return this.isInf == q.isInf
@@ -37,6 +66,11 @@ class point {
         }
     }
 
+    /**
+     * Checks if the point lies on the elliptic curve.
+     *
+     * @returns {Boolean} True if the point is on the curve, false otherwise.
+     */
     isOnCurve(): Boolean {
         if (this.isInf) 
             return false;
@@ -49,6 +83,12 @@ class point {
             )
         )
     }
+
+    /**
+     * Negates the point on the elliptic curve.
+     *
+     * @returns {point} The negated point.
+     */
     pointNegate(): point {
         return new point(
             this.x,
@@ -56,6 +96,12 @@ class point {
             this.isInf
         )
     }
+
+    /**
+     * Returns the point at infinity for the elliptic curve.
+     *
+     * @returns {point} The point at infinity.
+     */
     pointAtInfinity(): point {
         return new point(
             this.x.zero(),
@@ -65,6 +111,12 @@ class point {
     }
 }
 
+/**
+ * Doubles a point on the elliptic curve.
+ *
+ * @param {point} p - The point to double.
+ * @returns {point} The doubled point.
+ */
 function pointDouble(p: point): point {
     if (p.isInf) {
         return p
@@ -78,6 +130,13 @@ function pointDouble(p: point): point {
     return new point (x3, y3, false)
 }
 
+/**
+ * Adds two points on the elliptic curve.
+ *
+ * @param {point} p - The first point.
+ * @param {point} q - The second point.
+ * @returns {point} The sum of the two points.
+ */
 function pointAdd(p: point, q: point): point {
     if (p.isInf) {
         return q
@@ -112,6 +171,7 @@ let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
 let oneFp2 = new Fp2 (oneFp1, zeroFp1)
 let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
 
+// untwist maps a point in G2 space into a point in G12 space
 function untwist(fp2Point: point): point {
     // FIXME: what if the point is point at infinity
 
@@ -132,6 +192,13 @@ function untwist(fp2Point: point): point {
     return new point(wideX, wideY, false)
 }
 
+/**
+ * Multiplies a point on the elliptic curve by a scalar.
+ *
+ * @param {bigint} scalar - The scalar to multiply the point with.
+ * @param {point} base - The base point on the elliptic curve.
+ * @returns {point} The resulting point after multiplication.
+ */
 function pointMul(scalar: bigint, base: point): point {
     if (base.isInf) {
         return base.pointAtInfinity()
@@ -146,11 +213,18 @@ function pointMul(scalar: bigint, base: point): point {
     } else if (base.isOnCurve() && scalar < 0n) {
         return pointMulHelper(-1n * scalar, base.pointNegate(), base.pointAtInfinity());
     }
-
-    // TODO: add some assert validity function to check the inputs first
+    
     throw Error("error: is not on curve")
 }
   
+/**
+ * Helper function for point multiplication. Implements the double-and-add algorithm.
+ *
+ * @param {bigint} scalar - The scalar to multiply the point with.
+ * @param {point} base - The base point on the elliptic curve.
+ * @param {point} accum - The accumulator point for the double-and-add algorithm.
+ * @returns {point} The resulting point after multiplication.
+ */
 function pointMulHelper(scalar: bigint, base: point, accum: point): point {
     if (scalar == 0n) {
         return accum;
@@ -163,5 +237,6 @@ function pointMulHelper(scalar: bigint, base: point, accum: point): point {
         return pointMulHelper(scalar / 2n, doubleBase, accum);
     }
 }
+
 
 export { untwist, pointDouble, pointAdd, pointMul, point }

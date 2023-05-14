@@ -3,6 +3,7 @@ import { mod, powHelper, fp12FromBigInt, order, groupOrder } from "./fields"
 import { zeroFp12 } from "./fields"
 import { untwist, pointDouble, pointAdd, point } from "./points"
 
+// https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3, line 4]
 // calculate Tz(Q) / V2z(Q)
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
@@ -56,6 +57,7 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     )
 }
 
+// https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3, line 7]
 // calculate Lz,p(Q) / Vz+p(Q)
 function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideR = untwist(fp2PointR)
@@ -72,7 +74,16 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     }
 }
 
-
+/**
+ * Helper function for the Miller loop in the Tate pairing algorithm.
+ *
+ * @param {point} fpPointP - The point P on the elliptic curve over Fp.
+ * @param {point} fp2PointQ - The point Q on the elliptic curve over Fp2.
+ * @param {point} fp2PointR - The point R on the elliptic curve over Fp2.
+ * @param {boolean[]} boolsArr - The array of booleans representing the binary decomposition of the curve parameter b.
+ * @param {Fp12} fp12Result - The Fp12 accumulator used in the Miller loop.
+ * @returns {Fp12} The resulting Fp12 value after processing the Miller loop.
+ */
 function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: boolean[], fp12Result: Fp12): Fp12 {
     if (boolsArr.length == 0) {
         return fp12Result;
@@ -91,8 +102,14 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
     }
 }
 
-// implementation based on https://crypto.stanford.edu/pbc/thesis.pdf
-// miller algorithm for Tate pairing
+// Miller algorithm for Tate pairing, based on https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3].
+/**
+ * Computes the Miller loop in the Tate pairing algorithm.
+ *
+ * @param {point} fpPointP - The point P on the elliptic curve over Fp.
+ * @param {point} fp2PointQ - The point Q on the elliptic curve over Fp2.
+ * @returns {Fp12} The resulting Fp12 value after computing the Miller loop.
+ */
 function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 
     let iterations : boolean[] = [];
@@ -112,9 +129,16 @@ function miller(fpPointP: point, fp2PointQ: point): Fp12 {
     return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(1n))
 }
 
-// calculate pairing function without final exponentiation
-// for some x we have pairing(g1, sigma)^x = pairing(pk, H(m))^x
-// x happens to be (order^12 - 1) / groupOrder
+// Calculate the pairing function without final exponentiation.
+// For some x, we have pairing(g1, sigma)^x = pairing(pk, H(m))^x,
+// where x happens to be (order^12 - 1) / groupOrder.
+/**
+ * Computes the pairing of two points without final exponentiation.
+ *
+ * @param {point} p - The point P on the elliptic curve over Fp.
+ * @param {point} q - The point Q on the elliptic curve over Fp2.
+ * @returns {Fp12} The pairing value without final exponentiation if both points are on their respective curves and in their respective subgroups; otherwise, returns the zero value in Fp12.
+ */
 function pairing(p: point, q: point): Fp12 {
     if ( p.isInf || q.isInf ) {
         return zeroFp12;
@@ -132,7 +156,14 @@ function pairing(p: point, q: point): Fp12 {
     }
 }
 
-// raise calculated miller output to power (order^12 - 1) / groupOrder
+// Raise the calculated Miller output to the power (order^12 - 1) / groupOrder.
+// Final exponentiation step in the Tate pairing algorithm.
+/**
+ * Computes the final exponentiation in the Tate pairing algorithm.
+ *
+ * @param {Fp12} p - The Fp12 value resulting from the Miller loop.
+ * @returns {Fp12} The final exponentiated Fp12 value.
+ */
 function finalExponentiate(p: Fp12): Fp12 {
     return powHelper(p, ((order ** 12n) - 1n) / groupOrder) as Fp12 
 }
