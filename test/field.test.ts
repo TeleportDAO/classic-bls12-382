@@ -1,6 +1,6 @@
 import { expect } from "chai"
-import { fp1FromBigInt, fp12FromBigInt, fp6FromBigInt, fp2FromBigInt, powHelper } from ".."
-import { Fp2, Fp6, Fp12 } from ".."
+import { fp1FromBigInt, fp12FromBigInt, fp6FromBigInt, fp2FromBigInt, powHelper } from "../dist/src/fields"
+import { Fp2, Fp6, Fp12 } from "../dist/src/fields"
 
 describe("Fields", () => {
     it("Fp mul and inv", function() {

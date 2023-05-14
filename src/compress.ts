@@ -84,7 +84,7 @@ function g1PointCompress(p: point): string {
     return flaggedValue.toString(16)
 
   } else {
-    throw "error: the point is not in the subgroup"
+    throw Error("error: the point is not in the subgroup")
   }
 }
 
@@ -110,7 +110,7 @@ function uncompressG1Point(theHex: string): point {
     )
 
   } else {
-    throw "error: wrong uncompressed format"
+    throw Error("error: wrong uncompressed format")
   }
 }
 
@@ -122,7 +122,7 @@ function Fp2sqrt(a: Fp2): Fp2 {
   let a0 = (alpha.pow(order)).mul(alpha)
 
   if ( a0.eq((a.zero().sub(a.one()))) ) {
-      throw "error: there is no sqrt"
+      throw Error("error: there is no sqrt")
   }
 
   let x0 = a1.mul(a)
@@ -162,7 +162,7 @@ function g2PointCompress(p: point): string {
     return (flaggedx1.toString(16).padStart(96, "0") + flaggedx0.toString(16).padStart(96, "0"))
 
   } else {
-    throw "error: the point is not in the subgroup"
+    throw Error("error: the point is not in the subgroup")
   }
 }
 
@@ -206,7 +206,7 @@ function uncompressG2Point(theHex: string): point {
     )
 
   } else {
-    throw "error: wrong uncompressed format"
+    throw Error("error: wrong uncompressed format")
   }
 }
 

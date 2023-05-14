@@ -13,7 +13,7 @@ class point {
         isInf: Boolean
     ){
         if (typeof x != typeof y ) {
-            throw "error: x and y must have same types"
+            throw Error("error: x and y must have same types")
         } else {
             this.x = x;
             this.y = y;
@@ -39,28 +39,6 @@ class point {
     }
 
     isOnCurve(): Boolean {
-        if (this.x instanceof Fp1) {
-            return this.isOnCurveG1()
-        } else if (this.x instanceof Fp2) {
-            return this.isOnCurveG2()
-        } else {
-            throw "error"
-        }
-    }
-    isOnCurveG1(): Boolean {
-        if (this.isInf) 
-            return false;
-
-        return this.y.mul(this.y).eq(
-            this.x.mul(
-                this.x.mul(this.x)
-            ).add(
-                fp1FromBigInt(4n)
-            )
-        )
-    }
-
-    isOnCurveG2(): Boolean {
         if (this.isInf) 
             return false;
 
@@ -71,7 +49,42 @@ class point {
                 this.x.fromBigInt(4n).mulNonres()
             )
         )
+        
+        // if (this.x instanceof Fp1) {
+        //     return this.isOnCurveG1()
+        // } else if (this.x instanceof Fp2) {
+        //     return this.isOnCurveG2()
+        // } else {
+        //     console.log("type of this.x: ", typeof this.x)
+        //     console.log("this.x: ",this.x)
+        //     throw Error("error")
+        // }
     }
+    // isOnCurveG1(): Boolean {
+    //     if (this.isInf) 
+    //         return false;
+
+    //     return this.y.mul(this.y).eq(
+    //         this.x.mul(
+    //             this.x.mul(this.x)
+    //         ).add(
+    //             this.x.fromBigInt(4n).mulNonres()
+    //         )
+    //     )
+    // }
+
+    // isOnCurveG2(): Boolean {
+    //     if (this.isInf) 
+    //         return false;
+
+    //     return this.y.mul(this.y).eq(
+    //         this.x.mul(
+    //             this.x.mul(this.x)
+    //         ).add(
+    //             this.x.fromBigInt(4n).mulNonres()
+    //         )
+    //     )
+    // }
     pointNegate(): point {
         return new point(
             this.x,
@@ -171,7 +184,7 @@ function pointMul(scalar: bigint, base: point): point {
     }
 
     // TODO: add some assert validity function to check the inputs first
-    throw "error: is not on curve"
+    throw Error("error: is not on curve")
 }
   
 function pointMulHelper(scalar: bigint, base: point, accum: point): point {

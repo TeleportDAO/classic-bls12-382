@@ -29,7 +29,7 @@ export function aggregatePublicKeys(pubKeys: point[]): point {
 
     for( let i = 0; i < pubKeys.length; i++) {
         if( typeof pubKeys[i].x != theType) {
-            throw "error: inconsistent types"
+            throw Error("error: inconsistent types")
         }
         theType = typeof pubKeys[i].x
         pointSum = pointAdd(pointSum, pubKeys[i])
@@ -45,7 +45,7 @@ export function aggregateSignatures(signatures: point[]): point {
 
     for( let i = 0; i < signatures.length; i++) {
         if( typeof signatures[i].x != theType) {
-            throw "error: inconsistent types"
+            throw Error("error: inconsistent types")
         }
         theType = typeof signatures[i].x
         pointSum = pointAdd(pointSum, signatures[i])

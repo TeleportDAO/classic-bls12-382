@@ -1,6 +1,6 @@
 import { expect } from "chai"
-import { derviePublickey, verify, sign, G} from ".."
-import { pairing, finalExponentiate } from ".."
+import { derviePublickey, verify, sign, G} from "../dist/index"
+import { pairing, finalExponentiate } from "../dist/index"
 import { createG1Point, createG2Point } from "./test_utils"
 
 const pairingTestVector = require("./fixtures/pairing2.json")

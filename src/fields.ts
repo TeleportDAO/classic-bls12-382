@@ -416,7 +416,7 @@ class Fp12 implements Fp {
         return this.a1.eq(zeroFp6) && this.a0.eq(oneFp6)
     }
     mulNonres(): Fp12{
-        throw "error: not mul non res"
+        throw Error("error: not mul non res")
     }
     pow(a: bigint): Fp12 {
         return modPow(
