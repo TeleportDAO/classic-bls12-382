@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { derivePublickey, verify, sign, G} from "../dist/index"
+import { derivePublicKey, verify, sign, G} from "../dist/index"
 import { pairing, finalExponentiate } from "../dist/index"
 import { createG1Point, createG2Point } from "./test_utils"
 
@@ -132,7 +132,7 @@ describe("Verification", () => {
         for (let i = 0; i < pairingTestVector.length; i++) {
             if (pairingTestVector[i].points.length == 1) {
                 let privateKey = BigInt(privateKeyVector[i])
-                let P = derivePublickey(privateKey)
+                let P = derivePublicKey(privateKey)
 
                 // if (!P.isOnCurve() || !P.isInSubGroup())
                 //     throw("invalid publickey")

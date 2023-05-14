@@ -2,7 +2,7 @@ import { mod, groupOrder } from "./src/fields"
 import { point } from "./src/points"
 import { pairing, finalExponentiate } from "./src/pairing"
 import { g1PointCompress, uncompressG1Point, g2PointCompress, uncompressG2Point } from "./src/compress"
-import {derivePublickey, sign, verify, G} from "./src/bls"
+import {derivePublicKey, sign, verify, G} from "./src/bls"
 import {aggregatePublicKeys, aggregateSignatures, verifyBatch} from "./src/bls"
 
 
@@ -28,7 +28,7 @@ class blsSigner {
         sk: bigint
     ){
         this.sk = mod(sk, groupOrder);
-        this.pk = derivePublickey(sk);
+        this.pk = derivePublicKey(sk);
         this.cpk = g1PointCompress(this.pk);
     }
 
@@ -41,13 +41,13 @@ class blsSigner {
     }
 
     /**
-     * Sign a hashed message and return the compressed signature.
+     * Sign a compressed hashed message and return the compressed signature.
      *
      * @param {point} hashedMsg - The hashed message to be signed.
      * @returns {string} Compressed signature of the hashed message.
      */
-    signHashedMsg(hashedMsg: point): string {
-        let signature = sign(this.sk, hashedMsg)
+    signHashedMsg(cHashedMsg: string): string {
+        let signature = sign(this.sk, uncompressG2Point(cHashedMsg))
         return g2PointCompress(signature)
     }
 
@@ -58,7 +58,7 @@ class blsSigner {
      * @param {string} cPubKey - Compressed public key.
      * @param {string} cSig - Compressed signature.
      * @param {string} cHashedMsg - Compressed hashed message.
-     * @returns {Boolean} True if the compressed values are valid, otherwise false.
+     * @returns {Boolean} True if the compressed signature is valid, otherwise false.
      */
     verify(cPubKey: string, cSig: string, cHashedMsg: string): Boolean {
         let pubKey = uncompressG1Point(cPubKey)
@@ -108,13 +108,13 @@ class blsSigner {
 
     /**
      * Verify an array of compressed public keys and
-        * compressed signatures against a compressed hashed message.
+     * compressed signatures against a compressed hashed message.
      * It assumes that all signatures are for the same message.
      *
      * @param {string[]} cPubKeys - An array of compressed public keys.
      * @param {string[]} cSigs - An array of compressed signatures.
      * @param {string} cHashedMsg - Compressed hashed message.
-     * @returns {Boolean} True if the arrays of compressed values are valid, otherwise false.
+     * @returns {Boolean} True if the arrays of compressed signatures is valid, otherwise false.
      */
     verifyBatch(cPubKeys: string[], cSigs: string[], cHashedMsg: string): Boolean {
 
@@ -139,7 +139,7 @@ class blsSigner {
 // the underlying functions of blsSigner methods are exported as well, 
 // so it's possible use them independently 
 export {blsSigner}
-export {derivePublickey, sign, verify, G}
+export {derivePublicKey, sign, verify, G}
 export {aggregatePublicKeys, aggregateSignatures, verifyBatch}
 export { point }
 export { pairing, finalExponentiate }

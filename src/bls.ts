@@ -16,7 +16,7 @@ export const G = new point (
  * @param {bigint} privateKey - The private key used for deriving the public key.
  * @returns {point} The derived public key.
  */
-export function derivePublickey(privateKey: bigint): point {
+export function derivePublicKey(privateKey: bigint): point {
     // publicKey = secretKey * g1
     return pointMul(privateKey, G)
 }
@@ -104,7 +104,7 @@ export function aggregateSignatures(signatures: point[]): point {
  * Verifies aggregated signatures using aggregated public keys and a given hashed message.
  * This function assumes that the signatures are over the same message.
  *
- * @param {point[]} publicKeys - An array of public keys to be aggregated.
+ * @param {point[]} publicKeys - An array of public keys for verification.
  * @param {point[]} signatures - An array of signatures to be aggregated.
  * @param {point} hashedMessage - The hashed message used for batch verification.
  * @returns {Boolean} True if the aggregated signatures are valid, otherwise false.
