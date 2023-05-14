@@ -8,7 +8,6 @@ const POW_2_381 = 2n ** 381n;
 const POW_2_382 = POW_2_381 * 2n; 
 const POW_2_383 = POW_2_382 * 2n;
 
-// TODO: use the modPow in fields.ts
 function modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
     if (modulus === 1n) return 0n;
     let result = 1n;

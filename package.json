@@ -1,6 +1,6 @@
 {
   "name": "@teleportdao/bls12-381",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "an implementation of bls12-381 in typescript",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",

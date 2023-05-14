@@ -3,6 +3,7 @@ import { mod, powHelper, fp12FromBigInt, order, groupOrder } from "./fields"
 import { zeroFp12 } from "./fields"
 import { untwist, pointDouble, pointAdd, point } from "./points"
 
+// https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3, line 4]
 // calculate Tz(Q) / V2z(Q)
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
@@ -56,6 +57,7 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     )
 }
 
+// https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3, line 7]
 // calculate Lz,p(Q) / Vz+p(Q)
 function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideR = untwist(fp2PointR)
@@ -91,7 +93,7 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
     }
 }
 
-// implementation based on https://crypto.stanford.edu/pbc/thesis.pdf
+// implementation based on https://crypto.stanford.edu/pbc/thesis.pdf [section 3.9.2, the tate pairing, algorithm 3]
 // miller algorithm for Tate pairing
 function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 

@@ -1,7 +1,6 @@
 import { Fp, Fp1, Fp2, Fp6, Fp12, groupOrder } from "./fields";
 import { mod } from "./fields";
 
-// TODO: separate point class to g1 point and g2 point
 class point {
     public x: Fp;
     public y: Fp;
