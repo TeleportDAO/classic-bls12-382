@@ -1,25 +1,16 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { Fp, Fp1, Fp2, Fp6, Fp12 } from "./fields"
-import { fp1FromBigInt, fp2FromBigInt, fp6FromBigInt, fp12FromBigInt, order, groupOrder } from "./fields"
-import { untwist, pointDouble, pointAdd, powHelper, point } from "./points"
+import { Fp1, Fp12 } from "./fields"
+import { mod, powHelper, fp12FromBigInt, order, groupOrder } from "./fields"
+import { zeroFp12 } from "./fields"
+import { untwist, pointDouble, pointAdd, point } from "./points"
 
-// TODO: import from fields.ts
-let zeroFp1 = new Fp1 (BigNumber.from(0))
-let oneFp1 = new Fp1 (BigNumber.from(1))
-let zeroFp2 = new Fp2 (zeroFp1, zeroFp1)
-let oneFp2 = new Fp2 (zeroFp1, oneFp1)
-let zeroFp6 = new Fp6 (zeroFp2, zeroFp2, zeroFp2)
-let oneFp6 = new Fp6 (zeroFp2, zeroFp2, oneFp2)
-let zeroFp12 = new Fp12 (zeroFp6, zeroFp6)
-let oneFp12 = new Fp12 (zeroFp6, oneFp6)
-
+// calculate Tz(Q) / V2z(Q)
 function doubleEval(fp2Point: point, fpPoint: point) {
     let wideR = untwist(fp2Point)
 
     let slope = (
-        wideR.x.mul(wideR.x).mul(fp12FromBigInt(BigNumber.from(3)))
+        wideR.x.mul(wideR.x).mul(fp12FromBigInt(3n))
     ).mul(
-        wideR.y.mul(fp12FromBigInt(BigNumber.from(2))).inv()
+        wideR.y.mul(fp12FromBigInt(2n)).inv()
     )
     let v = wideR.y.sub(
         slope.mul(wideR.x)
@@ -37,7 +28,6 @@ function doubleEval(fp2Point: point, fpPoint: point) {
 
 function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     
-
     let slope = (fp12PointQ.y.sub(fp12PointR.y)).mul(
         (
             fp12PointQ.x.sub(fp12PointR.x)
@@ -66,6 +56,7 @@ function addEvalHelper(fp12PointR: point, fp12PointQ: point, fpPoint: point) {
     )
 }
 
+// calculate Lz,p(Q) / Vz+p(Q)
 function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     let wideR = untwist(fp2PointR)
     let wideQ = untwist(fp2PointQ)
@@ -81,7 +72,8 @@ function addEval(fp2PointR: point, fp2PointQ: point, fpPoint: point) {
     }
 }
 
-function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: Boolean[], fp12Result: Fp12): Fp12 {
+
+function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, boolsArr: boolean[], fp12Result: Fp12): Fp12 {
     if (boolsArr.length == 0) {
         return fp12Result;
     }
@@ -99,29 +91,31 @@ function millerHelper(fpPointP: point, fp2PointQ: point, fp2PointR: point, bools
     }
 }
 
+// implementation based on https://crypto.stanford.edu/pbc/thesis.pdf
+// miller algorithm for Tate pairing
 function miller(fpPointP: point, fp2PointQ: point): Fp12 {
 
-    let iterations : Boolean[] = [];
+    let iterations : boolean[] = [];
 
-    let b = BigNumber.from("0xd201000000010000");
+    // curve x
+    let b = 0xd201000000010000n
 
-    while (b.gt(BigNumber.from(0))) {
-        let theBool = b.mod(BigNumber.from(2)).gt(BigNumber.from(0))
+    while (b > 0n) {
+        let theBool = mod(b, 2n) > 0n
         
         iterations.push(theBool);
-        // b >>= BigNumber.from(1);
-        b = b.div(BigNumber.from(2));
+        b = b >> 1n;
     }
 
     iterations.reverse().splice(0, 1); // remove first element
 
-    return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(BigNumber.from(1)))
+    return millerHelper(fpPointP, fp2PointQ, fp2PointQ, iterations, fp12FromBigInt(1n))
 }
 
-
-
+// calculate pairing function without final exponentiation
+// for some x we have pairing(g1, sigma)^x = pairing(pk, H(m))^x
+// x happens to be (order^12 - 1) / groupOrder
 function pairing(p: point, q: point): Fp12 {
-
     if ( p.isInf || q.isInf ) {
         return zeroFp12;
     }
@@ -131,11 +125,16 @@ function pairing(p: point, q: point): Fp12 {
         p.isInSubGroup() && 
         q.isOnCurve() && 
         q.isInSubGroup()
-        ) {
-        return powHelper(miller(p, q), ((order.pow(12)).sub(BigNumber.from(1))).div(groupOrder), oneFp12) as Fp12;
+    ) {
+        return miller(p, q)
     } else {
         return zeroFp12;
     }
 }
-  
-export { pairing, miller, doubleEval, addEval }
+
+// raise calculated miller output to power (order^12 - 1) / groupOrder
+function finalExponentiate(p: Fp12): Fp12 {
+    return powHelper(p, ((order ** 12n) - 1n) / groupOrder) as Fp12 
+}
+
+export { pairing, miller, doubleEval, addEval, finalExponentiate }

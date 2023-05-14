@@ -1,10 +1,14 @@
 {
-  "name": "bls12-381",
-  "version": "0.0.1",
+  "name": "@teleportdao/bls12-381",
+  "version": "0.0.7",
   "description": "an implementation of bls12-381 in typescript",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register test/*.test.ts"
+    "build": "tsc && tsc -p tsconfig.esm.json",
+    "test": "mocha -r ts-node/register test/*.test.ts",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -17,13 +21,18 @@
   },
   "homepage": "https://github.com/TeleportDAO/bls12-381#readme",
   "dependencies": {
-    "@ethersproject/bignumber": "^5.7.0"
+    "@ethersproject/bignumber": "^5.7.0",
+    "commitlint": "^17.6.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "chai": "^4.3.7",
+    "husky": "^8.0.3",
+    "lerna": "^6.6.2",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
